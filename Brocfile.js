@@ -2,6 +2,8 @@
 /* global require, module */
 
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+var path = require('path');
+var pickFiles = require('broccoli-static-compiler');
 
 var app = new EmberAddon();
 
@@ -18,4 +20,9 @@ var app = new EmberAddon();
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
 
-module.exports = app.toTree();
+var bootstrapTree = pickFiles(path.join(app.bowerDirectory, 'bootstrap/dist/css'), {
+  srcDir: '/',
+  destDir: '/assets'
+});
+
+module.exports = app.toTree([bootstrapTree]);
