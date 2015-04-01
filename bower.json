@@ -12,6 +12,7 @@
     "ember-qunit": "0.3.0",
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
-    "bootstrap": "~3.3.4"
+    "bootstrap": "~3.3.4",
+    "video.js": "~4.12.5"
   }
 }
