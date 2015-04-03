@@ -16,6 +16,12 @@ module.exports = {
       production:  path.join(app.bowerDirectory, 'video.js/dist/video-js/video-js.min.css')
     });
 
+    app.import('vendor/ivy-videojs/shims.js', {
+      exports: {
+        videojs: ['default']
+      }
+    });
+
     app.import({
       development: path.join(app.bowerDirectory, 'video.js/dist/video-js/video.dev.js'),
       production:  path.join(app.bowerDirectory, 'video.js/dist/video-js/video.js')
