@@ -25,4 +25,9 @@ var bootstrapTree = pickFiles(path.join(app.bowerDirectory, 'bootstrap/dist/css'
   destDir: '/assets'
 });
 
-module.exports = app.toTree([bootstrapTree]);
+var fixturesTree = pickFiles(path.join(__dirname, 'tests/fixtures'), {
+  srcDir: '/',
+  destDir: '/assets'
+});
+
+module.exports = app.toTree([bootstrapTree, fixturesTree]);
