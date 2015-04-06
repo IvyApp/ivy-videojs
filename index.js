@@ -27,11 +27,7 @@ module.exports = {
       }
     });
 
-    app.import({
-      development: path.join(app.bowerDirectory, 'video.js/dist/video-js/video.dev.js'),
-      production:  path.join(app.bowerDirectory, 'video.js/dist/video-js/video.js')
-    });
-
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/video.dev.js'));
     app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/video-js.swf'));
   }
 };
