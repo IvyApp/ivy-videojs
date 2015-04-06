@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-sm-9">
+    {{#ivy-videojs class="vjs-default-skin" controls=controls currentTime=currentTime duration=duration height=height loop=loop muted=muted playbackRate=playbackRate width=width volume=volume}}
+      {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4"}}
+      {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm"}}
+    {{/ivy-videojs}}
+  </div>
+
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label class="control-label" for="currentTime">currentTime</label>
+      {{input id="currentTime" max=duration min=0 step=0.25 type="range" value=currentTime}}
+      <small class="help-block">{{currentTime}}</small>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label" for="volume">volume</label>
+      {{input id="volume" max=1 min=0 step=0.01 type="range" value=volume}}
+      <small class="help-block">{{volume}}</small>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label" for="playbackRate">playbackRate</label>
+      {{input id="playbackRate" max=5 min=0.5 step=0.5 type="range" value=playbackRate}}
+      <small class="help-block">{{playbackRate}}</small>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="control-label" for="width">width</label>
+          {{input class="form-control" id="width" type="number" value=width}}
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="control-label" for="height">height</label>
+          {{input class="form-control" id="height" type="number" value=height}}
+        </div>
+      </div>
+    </div>
+
+    <div class="checkbox">
+      <label>{{input checked=controls type="checkbox"}} controls</label>
+    </div>
+
+    <div class="checkbox">
+      <label>{{input checked=loop type="checkbox"}} loop</label>
+    </div>
+
+    <div class="checkbox">
+      <label>{{input checked=muted type="checkbox"}} muted</label>
+    </div>
+  </div>
+</div>

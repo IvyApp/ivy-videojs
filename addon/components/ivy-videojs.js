@@ -5,22 +5,6 @@ export default Ember.Component.extend({
   tagName: 'video',
   classNames: ['video-js'],
 
-  awaitLoadedMetadata: function() {
-    return this._awaitEvent('loadedmetadata');
-  },
-
-  awaitReady: function() {
-    return this.get('readyPromise');
-  },
-
-  awaitSeeked: function() {
-    return this._awaitEvent('seeked');
-  },
-
-  awaitVolumeChange: function() {
-    return this._awaitEvent('volumechange');
-  },
-
   updateCurrentTime: Ember.on('seeked', 'timeupdate', function(player) {
     this.set('currentTime', player.currentTime());
   }),
@@ -41,16 +25,6 @@ export default Ember.Component.extend({
     });
   },
 
-  _awaitEvent: function(eventName) {
-    var self = this;
-
-    return this.awaitReady().then(function() {
-      return new Ember.RSVP.Promise(function(resolve) {
-        self.one(eventName, resolve);
-      });
-    });
-  },
-
   _bindVideojsEvent: function(eventName) {
     var self = this;
 
@@ -61,31 +35,32 @@ export default Ember.Component.extend({
     });
   },
 
-  _bindVideojsEvents: function() {
-    this._bindVideojsEvent('durationchange');
-    this._bindVideojsEvent('loadedmetadata');
-    this._bindVideojsEvent('seeked');
-    this._bindVideojsEvent('timeupdate');
-    this._bindVideojsEvent('volumechange');
-  },
-
   _bindVideojsProperty: function(propertyName) {
     var player = this.get('player');
     var method = player[propertyName];
 
     if (method) {
-      var initialValue = method.call(player);
-
-      // Set the initial value from the player. This way we automatically pick
-      // up defaults from video.js without having to duplicate them here.
-      this.set(propertyName, initialValue);
+      // If the property is null or undefined, read the value from the player
+      // as a default value. This way we automatically pick up defaults from
+      // video.js without having to duplicate them ourselves.
+      if (Ember.isNone(this.get(propertyName))) {
+        this.set(propertyName, method.call(player));
+      }
 
       this._addVideojsPropertyObserver(propertyName);
       this._videojsPropertyDidChange(this, propertyName);
     }
   },
 
-  _bindVideojsProperties: function() {
+  _didInitVideojs: Ember.on('ready', function(player) {
+    this.set('player', player);
+
+    this._bindVideojsEvent('durationchange');
+    this._bindVideojsEvent('loadedmetadata');
+    this._bindVideojsEvent('seeked');
+    this._bindVideojsEvent('timeupdate');
+    this._bindVideojsEvent('volumechange');
+
     this._bindVideojsProperty('autoplay');
     this._bindVideojsProperty('controls');
     this._bindVideojsProperty('currentTime');
@@ -97,30 +72,20 @@ export default Ember.Component.extend({
     this._bindVideojsProperty('preload');
     this._bindVideojsProperty('volume');
     this._bindVideojsProperty('width');
-  },
-
-  _didInitVideojs: function(player) {
-    this.set('player', player);
-
-    this._bindVideojsEvents();
-    this._bindVideojsProperties();
 
     this.one('willDestroyElement', function() {
       player.dispose();
     });
-  },
+  }),
 
   _initVideojs: Ember.on('didInsertElement', function() {
     var self = this;
     var element = this.get('element');
     var options = {};
 
-    this.set('readyPromise', new Ember.RSVP.Promise(function(resolve) {
-      videojs(element, options, function() {
-        self._didInitVideojs(this);
-        resolve();
-      });
-    }));
+    videojs(element, options, function() {
+      self.trigger('ready', this);
+    });
   }),
 
   _videojsPropertyDidChange: function(sender, key) {

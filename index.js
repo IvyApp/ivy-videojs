@@ -16,6 +16,11 @@ module.exports = {
       production:  path.join(app.bowerDirectory, 'video.js/dist/video-js/video-js.min.css')
     });
 
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/font/vjs.eot'), { destDir: 'assets/font' });
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/font/vjs.svg'), { destDir: 'assets/font' });
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/font/vjs.ttf'), { destDir: 'assets/font' });
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js/font/vjs.woff'), { destDir: 'assets/font' });
+
     app.import('vendor/ivy-videojs/shims.js', {
       exports: {
         videojs: ['default']
