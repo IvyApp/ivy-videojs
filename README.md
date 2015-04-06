@@ -1,5 +1,7 @@
 # ivy-videojs
 
+[![Build Status](https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master)](https://travis-ci.org/IvyApp/ivy-videojs)
+
 A set of [Ember](http://emberjs.com/) components for the
 [video.js](http://www.videojs.com/) HTML5 video player.
 
