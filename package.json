@@ -1,7 +1,7 @@
 {
   "name": "ivy-videojs",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.1.0",
+  "description": "A set of Ember components for the video.js HTML5 video player.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,12 +11,15 @@
     "build": "ember build",
     "test": "ember test"
   },
-  "repository": "",
+  "repository": "https://github.com/IvyApp/ivy-videojs",
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "",
+  "author": "Dray Lacy",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IvyApp/ivy-videojs/issues"
+  },
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.2",
     "broccoli-static-compiler": "0.2.1",
@@ -33,7 +36,9 @@
     "ember-export-application-global": "^1.0.2"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "video",
+    "videojs"
   ],
   "dependencies": {
     "ember-cli-babel": "^4.0.0"
