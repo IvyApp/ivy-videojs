@@ -20,6 +20,9 @@ export default Ember.Component.extend({
   _addVideojsPropertyObserver: function(propertyName) {
     this.addObserver(propertyName, this, this._videojsPropertyDidChange);
 
+    // Trigger the observer to set the initial player value.
+    this.notifyPropertyChange(propertyName);
+
     this.one('willDestroyElement', this, function() {
       this.removeObserver(propertyName, this, this._videojsPropertyDidChange);
     });
@@ -48,7 +51,6 @@ export default Ember.Component.extend({
       }
 
       this._addVideojsPropertyObserver(propertyName);
-      this._videojsPropertyDidChange(this, propertyName);
     }
   },
 
