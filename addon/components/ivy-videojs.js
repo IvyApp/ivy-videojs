@@ -3,104 +3,151 @@ import videojs from 'videojs';
 
 export default Ember.Component.extend({
   tagName: 'video',
+
   classNames: ['video-js'],
 
-  updateCurrentTime: Ember.on('seeked', 'timeupdate', function(player) {
+  concatenatedProperties: ['playerPropertyBindings'],
+
+  playerEvents: {
+    durationchange : 'durationChange',
+    loadedmetadata : 'loadedMetadata',
+    play           : 'play',
+    seeked         : 'seeked',
+    timeupdate     : 'timeUpdate',
+    volumechange   : 'volumeChange'
+  },
+
+  playerPropertyBindings: [
+    'autoplay',
+    'controls',
+    'height',
+    'loop',
+    'muted',
+    'playbackRate',
+    'poster',
+    'preload',
+    'volume',
+    'width'
+  ],
+
+  currentTimeDidChange: Ember.on('seeked', 'timeUpdate', function(player) {
     this.set('currentTime', player.currentTime());
   }),
 
-  updateDuration: Ember.on('durationchange', function(player) {
+  durationDidChange: Ember.on('durationChange', function(player) {
     this.set('duration', player.duration());
   }),
 
-  updateVolume: Ember.on('volumechange', function(player) {
+  ready: function() {
+    return this.get('_readyPromise');
+  },
+
+  volumeDidChange: Ember.on('volumeChange', function(player) {
     this.set('volume', player.volume());
   }),
 
-  _addVideojsPropertyObserver: function(propertyName) {
-    this.addObserver(propertyName, this, this._videojsPropertyDidChange);
-
-    // Trigger the observer to set the initial player value.
-    this.notifyPropertyChange(propertyName);
-
-    this.one('willDestroyElement', this, function() {
-      this.removeObserver(propertyName, this, this._videojsPropertyDidChange);
-    });
-  },
-
-  _bindVideojsEvent: function(eventName) {
-    var self = this;
-
-    // Bind an event handler to the player. We don't need to worry about
-    // tearing it down since video.js does that for us on dispose.
-    this.get('player').on(eventName, function(event) {
-      self.trigger(eventName, this, event);
-    });
-  },
-
-  _bindVideojsProperty: function(propertyName) {
-    var player = this.get('player');
-    var method = player[propertyName];
-
-    if (method) {
-      // If the property is null or undefined, read the value from the player
-      // as a default value. This way we automatically pick up defaults from
-      // video.js without having to duplicate them ourselves.
-      if (Ember.isNone(this.get(propertyName))) {
-        this.set(propertyName, method.call(player));
-      }
-
-      this._addVideojsPropertyObserver(propertyName);
-    }
-  },
-
-  _didInitVideojs: Ember.on('ready', function(player) {
-    this.set('player', player);
-
-    this._bindVideojsEvent('durationchange');
-    this._bindVideojsEvent('loadedmetadata');
-    this._bindVideojsEvent('seeked');
-    this._bindVideojsEvent('timeupdate');
-    this._bindVideojsEvent('volumechange');
-
-    this._bindVideojsProperty('autoplay');
-    this._bindVideojsProperty('controls');
-    this._bindVideojsProperty('currentTime');
-    this._bindVideojsProperty('height');
-    this._bindVideojsProperty('loop');
-    this._bindVideojsProperty('muted');
-    this._bindVideojsProperty('playbackRate');
-    this._bindVideojsProperty('poster');
-    this._bindVideojsProperty('preload');
-    this._bindVideojsProperty('volume');
-    this._bindVideojsProperty('width');
-
-    this.one('willDestroyElement', function() {
-      player.dispose();
-    });
-  }),
-
-  _initVideojs: Ember.on('didInsertElement', function() {
-    var self = this;
-    var element = this.get('element');
-    var options = {};
-
-    videojs(element, options, function() {
-      self.trigger('ready', this);
-    });
-  }),
-
-  _videojsPropertyDidChange: function(sender, key) {
-    var player = sender.get('player');
-    var method = player[key];
+  _applyPlayerProperty: function(player, property, newValue) {
+    var method = player[property];
 
     if (method) {
       var oldValue = method.call(player);
-      var newValue = sender.get(key);
 
       if (oldValue !== newValue) {
         method.call(player, newValue);
       }
     }
+  },
+
+  _applyPlayerPropertyBindings: function(player, playerPropertyBindings) {
+    Ember.EnumerableUtils.forEach(playerPropertyBindings, function(property) {
+      if (property in this) {
+        var propertyValue = this.get(property);
+
+        // If the property is null or undefined, read the value from the player
+        // as a default value. This way we automatically pick up defaults from
+        // video.js without having to specify them here.
+        if (Ember.isNone(propertyValue)) {
+          propertyValue = player[property].call(player);
+          this.set(property, propertyValue);
+        }
+
+        this._setupPlayerPropertyBindingObservation(player, property);
+
+        // Set the initial player value.
+        this._applyPlayerProperty(player, property, propertyValue);
+      }
+    }, this);
+  },
+
+  _applyPropertiesToPlayer: function(player) {
+    var playerPropertyBindings = this.playerPropertyBindings;
+    if (playerPropertyBindings.length) {
+      this._applyPlayerPropertyBindings(player, playerPropertyBindings);
+    }
+  },
+
+  _didInitPlayer: function(player) {
+    this._applyPropertiesToPlayer(player);
+    this._setupPlayerEvents(player);
+
+    this.one('willDestroyElement', function() {
+      player.dispose();
+    });
+  },
+
+  _initPlayer: Ember.on('didInsertElement', function() {
+    var self = this;
+    var element = this.get('element');
+    var options = {};
+
+    this.set('_readyPromise', new Ember.RSVP.Promise(function(resolve) {
+      videojs(element, options, function() { resolve(this); });
+    }));
+
+    this.ready().then(function(player) {
+      self._didInitPlayer(player);
+    });
+  }),
+
+  _registerPlayerObserver: function(property, target, observer) {
+    var scheduledObserver = function() {
+      Ember.run.scheduleOnce('render', this, observer);
+    };
+
+    this.addObserver(property, target, scheduledObserver);
+
+    this.one('willClearRender', this, function() {
+      this.removeObserver(property, target, scheduledObserver);
+    });
+  },
+
+  _setupPlayerEventHandler: function(player, event, eventName) {
+    var handlerFunction = Ember.run.bind(this, function(e) {
+      this.trigger(eventName, player, e);
+    });
+
+    // Bind an event handler to the player. We don't need to worry about
+    // tearing it down since video.js does that for us on dispose.
+    player.on(event, handlerFunction);
+  },
+
+  _setupPlayerEvents: function(player) {
+    var event;
+    var events = this.get('playerEvents');
+
+    for (event in events) {
+      if (events.hasOwnProperty(event)) {
+        this._setupPlayerEventHandler(player, event, events[event]);
+      }
+    }
+  },
+
+  _setupPlayerPropertyBindingObservation: function(player, property) {
+    var observer = function() {
+      var propertyValue = this.get(property);
+      this._applyPlayerProperty(player, property, propertyValue);
+    };
+
+    this._registerPlayerObserver(property, this, observer);
   }
 });

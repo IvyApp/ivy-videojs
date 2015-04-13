@@ -16,69 +16,80 @@ function awaitEvent(component, eventName) {
   });
 }
 
-test('should update player currentTime when currentTime property changes', function(assert) {
+test('should update currentTime on seeked', function(assert) {
   var component = this.subject({
     template: template
   });
   this.render();
 
-  return awaitEvent(component, 'loadedmetadata').then(function() {
-    component.set('currentTime', 2);
-    assert.equal(component.get('player').currentTime(), 2);
+  return component.ready().then(function(player) {
+    return awaitEvent(component, 'loadedMetadata').then(function() {
+      player.currentTime(2);
+
+      return awaitEvent(component, 'seeked');
+    }).then(function() {
+      assert.equal(component.get('currentTime'), 2);
+    });
   });
 });
 
-test('should update currentTime property when player currentTime changes', function(assert) {
+test('should update currentTime on timeUpdate', function(assert) {
   var component = this.subject({
     template: template
   });
   this.render();
 
-  return awaitEvent(component, 'loadedmetadata').then(function() {
-    component.get('player').currentTime(2);
+  return component.ready().then(function(player) {
+    return awaitEvent(component, 'loadedMetadata').then(function() {
+      player.play();
 
-    return awaitEvent(component, 'seeked');
-  }).then(function() {
-    assert.equal(component.get('currentTime'), 2);
+      return awaitEvent(component, 'play');
+    }).then(function() {
+      return awaitEvent(component, 'timeUpdate');
+    }).then(function() {
+      assert.notEqual(component.get('currentTime'), 0);
+    });
   });
 });
 
-test('should set duration property from player', function(assert) {
+test('should update duration on durationChange', function(assert) {
   var component = this.subject({
     template: template
   });
   this.render();
 
-  return awaitEvent(component, 'loadedmetadata').then(function() {
-    assert.equal(component.get('duration'), component.get('player').duration());
+  return component.ready().then(function(player) {
+    return awaitEvent(component, 'durationChange').then(function() {
+      assert.notEqual(component.get('duration'), 0);
+    });
   });
 });
 
-test('should update volume property when player volume changes', function(assert) {
+test('should update volume on volumeChange', function(assert) {
   var component = this.subject({
     template: template
   });
   this.render();
 
-  component.get('player').volume(0.5);
+  return component.ready().then(function(player) {
+    player.volume(0.5);
 
-  return awaitEvent(component, 'volumechange').then(function() {
-    assert.equal(component.get('volume'), 0.5);
+    return awaitEvent(component, 'volumeChange').then(function() {
+      assert.equal(component.get('volume'), 0.5);
+    });
   });
 });
 
 function videojsPropertyTest(propertyName, value) {
-  test('should update player ' + propertyName + ' when ' + propertyName + ' property changes', function(assert) {
-    var component = this.subject({
-      template: template
-    });
+  test('should bind ' + propertyName + ' property to player ' + propertyName, function(assert) {
+    var props = { template: template };
+    props[propertyName] = value;
+    var component = this.subject(props);
     this.render();
 
-    var player = component.get('player');
-    var method = player[propertyName];
-
-    component.set(propertyName, value);
-    assert.equal(method.call(player), value);
+    return component.ready().then(function(player) {
+      assert.equal(player[propertyName](), value);
+    });
   });
 }
 
