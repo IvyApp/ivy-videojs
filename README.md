@@ -20,9 +20,9 @@ Use the `ivy-videojs` component as you would a `video` tag, and the
 
 ```handlebars
 {{#ivy-videojs poster="/path/to/poster.jpg"}}
-  {{ivy-video-source src="/path/to/video.mp4" type="video/mp4"}}
-  {{ivy-video-source src="/path/to/video.webm" type="video/webm"}}
-  {{ivy-video-source src="/path/to/video.ogv" type="video/ogg"}}
+  {{ivy-videojs-source src="/path/to/video.mp4" type="video/mp4"}}
+  {{ivy-videojs-source src="/path/to/video.webm" type="video/webm"}}
+  {{ivy-videojs-source src="/path/to/video.ogv" type="video/ogg"}}
 {{/ivy-videojs}}
 ```
 
