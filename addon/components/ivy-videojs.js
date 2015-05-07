@@ -43,6 +43,7 @@ export default Ember.Component.extend({
   },
 
   volumeDidChange: Ember.on('volumeChange', function(player) {
+    this.set('muted', player.muted());
     this.set('volume', player.volume());
   }),
 

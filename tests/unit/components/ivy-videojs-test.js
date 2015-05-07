@@ -65,6 +65,21 @@ test('should update duration on durationChange', function(assert) {
   });
 });
 
+test('should update muted on volumeChange', function(assert) {
+  var component = this.subject({
+    template: template
+  });
+  this.render();
+
+  return component.ready().then(function(player) {
+    player.muted(true);
+
+    return awaitEvent(component, 'volumeChange').then(function() {
+      assert.equal(component.get('muted'), true);
+    });
+  });
+});
+
 test('should update volume on volumeChange', function(assert) {
   var component = this.subject({
     template: template
