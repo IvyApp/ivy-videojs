@@ -103,16 +103,6 @@ export default Ember.Component.extend({
     }, this);
   },
 
-  _didInitPlayer: function(player) {
-    this._applyAttributesToPlayer(player);
-    this._setupPlayerEvents(player);
-    this._setupAutoresize(player);
-
-    this.one('willDestroyElement', function() {
-      player.dispose();
-    });
-  },
-
   _autoresizePlayer: function(player) {
     if (!this.get('autoresize')) { return; }
 
@@ -122,6 +112,16 @@ export default Ember.Component.extend({
     this.setProperties({
       currentWidth:  parentWidth,
       currentHeight: parentWidth * naturalAspectRatio
+    });
+  },
+
+  _didInitPlayer: function(player) {
+    this._applyAttributesToPlayer(player);
+    this._setupPlayerEvents(player);
+    this._setupAutoresize(player);
+
+    this.one('willDestroyElement', function() {
+      player.dispose();
     });
   },
 
