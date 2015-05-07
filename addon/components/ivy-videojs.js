@@ -12,6 +12,7 @@ export default Ember.Component.extend({
     durationchange : 'durationChange',
     loadedmetadata : 'loadedMetadata',
     play           : 'play',
+    resize         : 'resize',
     seeked         : 'seeked',
     timeupdate     : 'timeUpdate',
     volumechange   : 'volumeChange'
@@ -34,6 +35,13 @@ export default Ember.Component.extend({
 
   currentTimeDidChange: Ember.on('seeked', 'timeUpdate', function(player) {
     this.set('currentTime', player.currentTime());
+  }),
+
+  dimensionsDidChange: Ember.on('resize', function(player) {
+    this.setProperties({
+      currentHeight: player.height(),
+      currentWidth:  player.width()
+    });
   }),
 
   durationDidChange: Ember.on('durationChange', function(player) {
@@ -109,10 +117,7 @@ export default Ember.Component.extend({
     var naturalAspectRatio = this.get('naturalAspectRatio');
     var parentWidth = Ember.$(player.el().parentNode).width();
 
-    this.setProperties({
-      currentWidth:  parentWidth,
-      currentHeight: parentWidth * naturalAspectRatio
-    });
+    player.dimensions(parentWidth, parentWidth * naturalAspectRatio);
   },
 
   _didInitPlayer: function(player) {
