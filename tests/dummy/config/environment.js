@@ -7,7 +7,7 @@ module.exports = function(environment) {
     baseURL: '/',
     locationType: 'auto',
     contentSecurityPolicy: {
-      'img-src': "'self' data:",
+      'font-src': "'self' data:",
       'media-src': "'self' http://vjs.zencdn.net"
     },
     EmberENV: {
