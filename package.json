@@ -1,6 +1,6 @@
 {
   "name": "ivy-videojs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A set of Ember components for the video.js HTML5 video player.",
   "directories": {
     "doc": "doc",
