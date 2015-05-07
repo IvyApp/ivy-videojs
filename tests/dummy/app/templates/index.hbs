@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-9">
-    {{#ivy-videojs class="vjs-default-skin" controls=controls currentTime=currentTime duration=duration height=height loop=loop muted=muted playbackRate=playbackRate width=width volume=volume}}
+    {{#ivy-videojs autoresize=autoresize class="vjs-default-skin" controls=controls currentHeight=currentHeight currentTime=currentTime currentWidth=currentWidth duration=duration loop=loop muted=muted naturalHeight=naturalHeight naturalWidth=naturalWidth playbackRate=playbackRate volume=volume}}
       {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4"}}
       {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm"}}
     {{/ivy-videojs}}
@@ -28,17 +28,37 @@
     <div class="row">
       <div class="col-sm-6">
         <div class="form-group">
-          <label class="control-label" for="width">width</label>
-          {{input class="form-control" id="width" type="number" value=width}}
+          <label class="control-label" for="currentWidth">currentWidth</label>
+          {{input class="form-control" id="currentWidth" type="number" value=currentWidth}}
         </div>
       </div>
 
       <div class="col-sm-6">
         <div class="form-group">
-          <label class="control-label" for="height">height</label>
-          {{input class="form-control" id="height" type="number" value=height}}
+          <label class="control-label" for="currentHeight">currentHeight</label>
+          {{input class="form-control" id="currentHeight" type="number" value=currentHeight}}
         </div>
       </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="control-label" for="naturalWidth">naturalWidth</label>
+          {{input class="form-control" id="naturalWidth" type="number" value=naturalWidth}}
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="control-label" for="naturalHeight">naturalHeight</label>
+          {{input class="form-control" id="naturalHeight" type="number" value=naturalHeight}}
+        </div>
+      </div>
+    </div>
+
+    <div class="checkbox">
+      <label>{{input checked=autoresize type="checkbox"}} autoresize</label>
     </div>
 
     <div class="checkbox">

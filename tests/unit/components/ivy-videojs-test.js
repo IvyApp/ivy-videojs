@@ -95,26 +95,44 @@ test('should update volume on volumeChange', function(assert) {
   });
 });
 
-function videojsPropertyTest(propertyName, value) {
-  test('should bind ' + propertyName + ' property to player ' + propertyName, function(assert) {
+test('should fill its parent container when autoresize is true', function(assert) {
+  var component = this.subject({
+    autoresize: true,
+    naturalHeight: 320,
+    naturalWidth: 560,
+    template: template
+  });
+  this.render();
+
+  return component.ready().then(function(player) {
+    // Since videojs wraps our component in a div, we actually want to grab the
+    // grandparent of the component here.
+    var parent = component.$().parent().parent();
+
+    assert.equal(component.get('currentWidth'), parent.width());
+  });
+});
+
+function videojsPropertyTest(property, attrName, value) {
+  test('should bind ' + property + ' property to player ' + attrName + ' attribute', function(assert) {
     var props = { template: template };
-    props[propertyName] = value;
+    props[property] = value;
     var component = this.subject(props);
     this.render();
 
     return component.ready().then(function(player) {
-      assert.equal(player[propertyName](), value);
+      assert.equal(player[attrName](), value);
     });
   });
 }
 
-videojsPropertyTest('autoplay', true);
-videojsPropertyTest('controls', true);
-videojsPropertyTest('height', 320);
-videojsPropertyTest('loop', true);
-videojsPropertyTest('muted', true);
-videojsPropertyTest('playbackRate', 1.5);
-videojsPropertyTest('poster', 'assets/small.png');
-videojsPropertyTest('preload', 'none');
-videojsPropertyTest('volume', 0.5);
-videojsPropertyTest('width', 560);
+videojsPropertyTest('autoplay', 'autoplay', true);
+videojsPropertyTest('controls', 'controls', true);
+videojsPropertyTest('currentHeight', 'height', 320);
+videojsPropertyTest('currentWidth', 'width', 560);
+videojsPropertyTest('loop', 'loop', true);
+videojsPropertyTest('muted', 'muted', true);
+videojsPropertyTest('playbackRate', 'playbackRate', 1.5);
+videojsPropertyTest('poster', 'poster', 'assets/small.png');
+videojsPropertyTest('preload', 'preload', 'none');
+videojsPropertyTest('volume', 'volume', 0.5);

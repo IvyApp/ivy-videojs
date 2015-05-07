@@ -1,7 +1,8 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
+  autoresize: true,
   controls: true,
-  height: 200,
-  width: 480
+  naturalHeight: 400,
+  naturalWidth: 960
 });

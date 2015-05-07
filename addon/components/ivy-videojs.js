@@ -6,7 +6,7 @@ export default Ember.Component.extend({
 
   classNames: ['video-js'],
 
-  concatenatedProperties: ['playerPropertyBindings'],
+  concatenatedProperties: ['playerAttributeBindings'],
 
   playerEvents: {
     durationchange : 'durationChange',
@@ -17,18 +17,20 @@ export default Ember.Component.extend({
     volumechange   : 'volumeChange'
   },
 
-  playerPropertyBindings: [
+  playerAttributeBindings: [
     'autoplay',
     'controls',
-    'height',
+    'currentHeight:height',
+    'currentWidth:width',
     'loop',
     'muted',
     'playbackRate',
     'poster',
     'preload',
-    'volume',
-    'width'
+    'volume'
   ],
+
+  autoresize: false,
 
   currentTimeDidChange: Ember.on('seeked', 'timeUpdate', function(player) {
     this.set('currentTime', player.currentTime());
@@ -37,6 +39,10 @@ export default Ember.Component.extend({
   durationDidChange: Ember.on('durationChange', function(player) {
     this.set('duration', player.duration());
   }),
+
+  naturalAspectRatio: Ember.computed(function() {
+    return this.get('naturalHeight') / this.get('naturalWidth');
+  }).property('naturalHeight', 'naturalWidth'),
 
   ready: function() {
     return this.get('_readyPromise');
@@ -47,8 +53,15 @@ export default Ember.Component.extend({
     this.set('volume', player.volume());
   }),
 
-  _applyPlayerProperty: function(player, property, newValue) {
-    var method = player[property];
+  _applyAttributesToPlayer: function(player) {
+    var playerAttributeBindings = this.playerAttributeBindings;
+    if (playerAttributeBindings.length) {
+      this._applyPlayerAttributeBindings(player, playerAttributeBindings);
+    }
+  },
+
+  _applyPlayerAttribute: function(player, attrName, newValue) {
+    var method = player[attrName];
 
     if (method) {
       var oldValue = method.call(player);
@@ -59,8 +72,18 @@ export default Ember.Component.extend({
     }
   },
 
-  _applyPlayerPropertyBindings: function(player, playerPropertyBindings) {
-    Ember.EnumerableUtils.forEach(playerPropertyBindings, function(property) {
+  _applyPlayerAttributeBindings: function(player, playerAttributeBindings) {
+    Ember.EnumerableUtils.forEach(playerAttributeBindings, function(binding) {
+      var colonIndex = binding.indexOf(':'), property, attrName;
+
+      if (colonIndex === -1) {
+        property = binding;
+        attrName = binding;
+      } else {
+        property = binding.substring(0, colonIndex);
+        attrName = binding.substring(colonIndex + 1);
+      }
+
       if (property in this) {
         var propertyValue = this.get(property);
 
@@ -68,31 +91,37 @@ export default Ember.Component.extend({
         // as a default value. This way we automatically pick up defaults from
         // video.js without having to specify them here.
         if (Ember.isNone(propertyValue)) {
-          propertyValue = player[property].call(player);
+          propertyValue = player[attrName].call(player);
           this.set(property, propertyValue);
         }
 
-        this._setupPlayerPropertyBindingObservation(player, property);
+        this._setupPlayerAttributeBindingObservation(player, property, attrName);
 
         // Set the initial player value.
-        this._applyPlayerProperty(player, property, propertyValue);
+        this._applyPlayerAttribute(player, attrName, propertyValue);
       }
     }, this);
   },
 
-  _applyPropertiesToPlayer: function(player) {
-    var playerPropertyBindings = this.playerPropertyBindings;
-    if (playerPropertyBindings.length) {
-      this._applyPlayerPropertyBindings(player, playerPropertyBindings);
-    }
-  },
-
   _didInitPlayer: function(player) {
-    this._applyPropertiesToPlayer(player);
+    this._applyAttributesToPlayer(player);
     this._setupPlayerEvents(player);
+    this._setupAutoresize(player);
 
     this.one('willDestroyElement', function() {
       player.dispose();
+    });
+  },
+
+  _autoresizePlayer: function(player) {
+    if (!this.get('autoresize')) { return; }
+
+    var naturalAspectRatio = this.get('naturalAspectRatio');
+    var parentWidth = Ember.$(player.el().parentNode).width();
+
+    this.setProperties({
+      currentWidth:  parentWidth,
+      currentHeight: parentWidth * naturalAspectRatio
     });
   },
 
@@ -122,6 +151,29 @@ export default Ember.Component.extend({
     });
   },
 
+  _setupAutoresize: function(player) {
+    this._setupResizeListener(player);
+
+    var observer = function() {
+      this._autoresizePlayer(player);
+    };
+
+    this._registerPlayerObserver('autoresize', this, observer);
+    this._registerPlayerObserver('naturalAspectRatio', this, observer);
+
+    // Set the initial player size.
+    Ember.run.scheduleOnce('render', this, observer);
+  },
+
+  _setupPlayerAttributeBindingObservation: function(player, property, attrName) {
+    var observer = function() {
+      var propertyValue = this.get(property);
+      this._applyPlayerAttribute(player, attrName, propertyValue);
+    };
+
+    this._registerPlayerObserver(property, this, observer);
+  },
+
   _setupPlayerEventHandler: function(player, event, eventName) {
     var handlerFunction = Ember.run.bind(this, function(e) {
       this.trigger(eventName, player, e);
@@ -143,12 +195,21 @@ export default Ember.Component.extend({
     }
   },
 
-  _setupPlayerPropertyBindingObservation: function(player, property) {
-    var observer = function() {
-      var propertyValue = this.get(property);
-      this._applyPlayerProperty(player, property, propertyValue);
+  _setupResizeListener: function(player) {
+    var handlerFunction = Ember.run.bind(this, function() {
+      this._autoresizePlayer(player);
+    });
+
+    // Debounce the handler function so that it only fires once the window has
+    // stopped resizing for 150ms.
+    var debouncedFunction = function() {
+      Ember.run.debounce(this, handlerFunction, 150);
     };
 
-    this._registerPlayerObserver(property, this, observer);
+    Ember.$(window).on('resize', debouncedFunction);
+
+    this.one('willClearRender', function() {
+      Ember.$(window).off('resize', debouncedFunction);
+    });
   }
 });
