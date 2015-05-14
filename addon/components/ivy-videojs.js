@@ -117,7 +117,10 @@ export default Ember.Component.extend({
     var naturalAspectRatio = this.get('naturalAspectRatio');
     var parentWidth = Ember.$(player.el().parentNode).width();
 
-    player.dimensions(parentWidth, parentWidth * naturalAspectRatio);
+    this.setProperties({
+      currentHeight: parentWidth * naturalAspectRatio,
+      currentWidth:  parentWidth
+    });
   },
 
   _didInitPlayer: function(player) {
