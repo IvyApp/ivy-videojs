@@ -1,3 +1,1 @@
-import IvyVideojsComponent from 'ivy-videojs/components/ivy-videojs';
-
-export default IvyVideojsComponent;
+export { default } from 'ivy-videojs/components/ivy-videojs';
