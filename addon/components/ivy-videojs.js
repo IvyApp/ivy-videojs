@@ -52,10 +52,6 @@ export default Ember.Component.extend({
     return this.get('naturalHeight') / this.get('naturalWidth');
   }).property('naturalHeight', 'naturalWidth'),
 
-  ready: function() {
-    return this.get('_readyPromise');
-  },
-
   volumeDidChange: Ember.on('volumeChange', function(player) {
     this.set('muted', player.muted());
     this.set('volume', player.volume());
@@ -128,6 +124,8 @@ export default Ember.Component.extend({
     this._setupPlayerEvents(player);
     this._setupAutoresize(player);
 
+    this.sendAction('ready');
+
     this.one('willDestroyElement', function() {
       player.dispose();
     });
@@ -138,12 +136,8 @@ export default Ember.Component.extend({
     var element = this.get('element');
     var options = {};
 
-    this.set('_readyPromise', new Ember.RSVP.Promise(function(resolve) {
-      videojs(element, options, function() { resolve(this); });
-    }));
-
-    this.ready().then(function(player) {
-      self._didInitPlayer(player);
+    videojs(element, options, function() {
+      self._didInitPlayer(this);
     });
   }),
 

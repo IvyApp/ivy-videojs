@@ -1,126 +1,145 @@
 import Ember from 'ember';
+import videojs from 'videojs';
 import { moduleForComponent, test } from 'ember-qunit';
 
-moduleForComponent('ivy-videojs', 'unit/components/ivy-videojs', {
-  needs: ['component:ivy-videojs-source']
+moduleForComponent('ivy-videojs', {
+  integration: true
 });
 
-var template = Ember.Handlebars.compile(
-  '{{ivy-videojs-source src="assets/small.mp4" type="video/mp4"}}' +
-  '{{ivy-videojs-source src="assets/small.webm" type="video/webm"}}'
-);
-
-function awaitEvent(component, eventName) {
-  return new Ember.RSVP.Promise(function(resolve) {
-    component.one(eventName, resolve);
-  });
-}
+var template =
+  '{{#ivy-videojs autoplay=autoplay autoresize=autoresize controls=controls currentHeight=currentHeight currentTime=currentTime currentWidth=currentWidth id="ivy-videojs" loop=loop muted=muted naturalHeight=naturalHeight naturalWidth=naturalWidth playbackRate=playbackRate poster=poster preload=preload ready="ready" volume=volume}}' +
+  '  {{ivy-videojs-source src="assets/small.mp4" type="video/mp4"}}' +
+  '  {{ivy-videojs-source src="assets/small.webm" type="video/webm"}}' +
+  '{{/ivy-videojs}}';
 
 test('should update currentTime on seeked', function(assert) {
-  var component = this.subject({
-    template: template
-  });
-  this.render();
+  var context = this;
 
-  return component.ready().then(function(player) {
-    return awaitEvent(component, 'loadedMetadata').then(function() {
-      player.currentTime(2);
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    var player = videojs.getPlayers()['ivy-videojs'];
 
-      return awaitEvent(component, 'seeked');
+    return new Ember.RSVP.Promise(function(resolve) {
+      player.one('loadedmetadata', resolve);
     }).then(function() {
-      assert.equal(component.get('currentTime'), 2);
+      return new Ember.RSVP.Promise(function(resolve) {
+        player.one('seeked', resolve);
+        player.currentTime(2);
+      });
+    }).then(function() {
+      assert.equal(context.get('currentTime'), 2);
     });
   });
 });
 
 test('should update currentTime on timeUpdate', function(assert) {
-  var component = this.subject({
-    template: template
-  });
-  this.render();
+  var context = this;
 
-  return component.ready().then(function(player) {
-    return awaitEvent(component, 'loadedMetadata').then(function() {
-      player.play();
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    var player = videojs.getPlayers()['ivy-videojs'];
 
-      return awaitEvent(component, 'play');
+    return new Ember.RSVP.Promise(function(resolve) {
+      player.one('loadedmetadata', resolve);
     }).then(function() {
-      return awaitEvent(component, 'timeUpdate');
+      return new Ember.RSVP.Promise(function(resolve) {
+        player.one('play', resolve);
+        player.play();
+      });
     }).then(function() {
-      assert.notEqual(component.get('currentTime'), 0);
+      return new Ember.RSVP.Promise(function(resolve) {
+        player.one('timeupdate', resolve);
+      });
+    }).then(function() {
+      assert.notEqual(context.get('currentTime'), 0);
     });
   });
 });
 
 test('should update duration on durationChange', function(assert) {
-  var component = this.subject({
-    template: template
-  });
-  this.render();
+  var context = this;
 
-  return component.ready().then(function(player) {
-    return awaitEvent(component, 'durationChange').then(function() {
-      assert.notEqual(component.get('duration'), 0);
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    var player = videojs.getPlayers()['ivy-videojs'];
+
+    return new Ember.RSVP.Promise(function(resolve) {
+      player.one('durationchange', resolve);
+    }).then(function() {
+      assert.notEqual(context.get('duration'), 0);
     });
   });
 });
 
 test('should update muted on volumeChange', function(assert) {
-  var component = this.subject({
-    template: template
-  });
-  this.render();
+  var context = this;
 
-  return component.ready().then(function(player) {
-    player.muted(true);
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    var player = videojs.getPlayers()['ivy-videojs'];
 
-    return awaitEvent(component, 'volumeChange').then(function() {
-      assert.equal(component.get('muted'), true);
+    return new Ember.RSVP.Promise(function(resolve) {
+      player.one('volumechange', resolve);
+      player.muted(true);
+    }).then(function() {
+      assert.equal(context.get('muted'), true);
     });
   });
 });
 
 test('should update volume on volumeChange', function(assert) {
-  var component = this.subject({
-    template: template
-  });
-  this.render();
+  var context = this;
 
-  return component.ready().then(function(player) {
-    player.volume(0.5);
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    var player = videojs.getPlayers()['ivy-videojs'];
 
-    return awaitEvent(component, 'volumeChange').then(function() {
-      assert.equal(component.get('volume'), 0.5);
+    return new Ember.RSVP.Promise(function(resolve) {
+      player.one('volumechange', resolve);
+      player.volume(0.5);
+    }).then(function() {
+      assert.equal(context.get('volume'), 0.5);
     });
   });
 });
 
 test('should fill its parent container when autoresize is true', function(assert) {
-  var component = this.subject({
-    autoresize: true,
-    naturalHeight: 320,
-    naturalWidth: 560,
-    template: template
-  });
-  this.render();
+  this.set('autoresize', true);
+  this.set('naturalHeight', 320);
+  this.set('naturalWidth', 560);
 
-  return component.ready().then(function(player) {
-    // Since videojs wraps our component in a div, we actually want to grab the
-    // grandparent of the component here.
-    var parent = component.$().parent().parent();
+  var context = this;
 
-    assert.equal(component.get('currentWidth'), parent.width());
+  return new Ember.RSVP.Promise(function(resolve) {
+    context.on('ready', resolve);
+    context.render(template);
+  }).then(function() {
+    assert.equal(context.get('currentWidth'), context.$().width());
   });
 });
 
 function videojsPropertyTest(property, attrName, value) {
   test('should bind ' + property + ' property to player ' + attrName + ' attribute', function(assert) {
-    var props = { template: template };
-    props[property] = value;
-    var component = this.subject(props);
-    this.render();
+    this.set(property, value);
 
-    return component.ready().then(function(player) {
+    var context = this;
+
+    return new Ember.RSVP.Promise(function(resolve) {
+      context.on('ready', resolve);
+      context.render(template);
+    }).then(function() {
+      var player = videojs.getPlayers()['ivy-videojs'];
+
       assert.equal(player[attrName](), value);
     });
   });
