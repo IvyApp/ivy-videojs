@@ -135,7 +135,7 @@ export default Ember.Component.extend({
     var options = {};
 
     videojs(element, options, function() {
-      self._didInitPlayer(this);
+      Ember.run(self, self._didInitPlayer, this);
     });
   }),
 
