@@ -88,22 +88,20 @@ export default Ember.Component.extend({
         attrName = binding.substring(colonIndex + 1);
       }
 
-      if (property in this) {
-        var propertyValue = this.get(property);
+      var propertyValue = this.get(property);
 
-        // If the property is null or undefined, read the value from the player
-        // as a default value. This way we automatically pick up defaults from
-        // video.js without having to specify them here.
-        if (Ember.isNone(propertyValue)) {
-          propertyValue = player[attrName].call(player);
-          this.set(property, propertyValue);
-        }
-
-        this._setupPlayerAttributeBindingObservation(player, property, attrName);
-
-        // Set the initial player value.
-        this._applyPlayerAttribute(player, attrName, propertyValue);
+      // If the property is null or undefined, read the value from the player
+      // as a default value. This way we automatically pick up defaults from
+      // video.js without having to specify them here.
+      if (Ember.isNone(propertyValue)) {
+        propertyValue = player[attrName].call(player);
+        this.set(property, propertyValue);
       }
+
+      this._setupPlayerAttributeBindingObservation(player, property, attrName);
+
+      // Set the initial player value.
+      this._applyPlayerAttribute(player, attrName, propertyValue);
     }, this);
   },
 
