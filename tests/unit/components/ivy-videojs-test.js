@@ -121,7 +121,10 @@ test('should fill its parent container when autoresize is true', function(assert
   var context = this;
 
   return new Ember.RSVP.Promise(function(resolve) {
-    context.on('ready', resolve);
+    context.on('ready', function() {
+      Ember.run.scheduleOnce('afterRender', resolve);
+    });
+
     context.render(template);
   }).then(function() {
     assert.equal(context.get('currentWidth'), context.$().width());
