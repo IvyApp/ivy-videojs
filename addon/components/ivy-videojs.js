@@ -119,7 +119,6 @@ export default Ember.Component.extend({
 
   _didInitPlayer: function(player) {
     this._applyAttributesToPlayer(player);
-    this._setupPlayerEvents(player);
     this._setupAutoresize(player);
 
     this.sendAction('ready');
@@ -135,6 +134,7 @@ export default Ember.Component.extend({
     var options = {};
 
     videojs(element, options, function() {
+      self._setupPlayerEvents(this);
       Ember.run(self, self._didInitPlayer, this);
     });
   }),
