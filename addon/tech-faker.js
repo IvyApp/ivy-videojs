@@ -14,23 +14,32 @@ class TechFaker extends Tech {
     this._currentTime = 0;
     this._duration = 60;
     this._loop = false;
+    this._paused = true;
     this._playbackRate = 1.0;
     this._preload = false;
     this._muted = true;
     this._volume = 0;
 
-    this.triggerReady();
-
-    this.one('loadedmetadata', function() {
-      this.trigger('durationchange');
+    this.on('loadstart', function() {
+      this.setTimeout(function() {
+        this.trigger('loadedmetadata');
+      }, 1);
     });
 
-    // Ensure that loadedmetadata is triggered asynchronously.
-    this.setTimeout(function() {
-      this.ready(function() {
-        this.trigger('loadedmetadata');
-      });
-    }, 1);
+    this.on('loadedmetadata', function() {
+      this.setTimeout(function() {
+        this.trigger('durationchange');
+        this.trigger('loadeddata');
+      }, 1);
+    });
+
+    this.on('loadeddata', function() {
+      this.setTimeout(function() {
+        this.trigger('loadedalldata');
+      }, 1);
+    });
+
+    this.triggerReady();
   }
 
   autoplay() {
@@ -45,6 +54,12 @@ class TechFaker extends Tech {
     return this._duration;
   }
 
+  load() {
+    this.setTimeout(function() {
+      this.trigger('loadstart');
+    }, 1);
+  }
+
   loop() {
     return this._loop;
   }
@@ -53,7 +68,17 @@ class TechFaker extends Tech {
     return this._muted;
   }
 
+  pause() {
+    this._paused = true;
+    this.trigger('pause');
+  }
+
+  paused() {
+    return this._paused;
+  }
+
   play() {
+    this._paused = false;
     this.trigger('play');
 
     this.setTimeout(function() {

@@ -23,6 +23,7 @@ test('should update currentTime on seeked', function(assert) {
 
     return new Ember.RSVP.Promise(function(resolve) {
       player.one('loadedmetadata', resolve);
+      player.load();
     }).then(function() {
       return new Ember.RSVP.Promise(function(resolve) {
         player.one('seeked', resolve);
@@ -45,6 +46,7 @@ test('should update currentTime on timeUpdate', function(assert) {
 
     return new Ember.RSVP.Promise(function(resolve) {
       player.one('loadedmetadata', resolve);
+      player.load();
     }).then(function() {
       return new Ember.RSVP.Promise(function(resolve) {
         player.one('play', resolve);
@@ -71,6 +73,7 @@ test('should update duration on durationChange', function(assert) {
 
     return new Ember.RSVP.Promise(function(resolve) {
       player.one('durationchange', resolve);
+      player.load();
     }).then(function() {
       assert.notEqual(context.get('duration'), 0);
     });
