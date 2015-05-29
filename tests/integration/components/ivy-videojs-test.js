@@ -45,17 +45,8 @@ test('should update currentTime on timeUpdate', function(assert) {
     var player = videojs.getPlayers()['ivy-videojs'];
 
     return new Ember.RSVP.Promise(function(resolve) {
-      player.one('loadedmetadata', resolve);
-      player.load();
-    }).then(function() {
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('play', resolve);
-        player.play();
-      });
-    }).then(function() {
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('timeupdate', resolve);
-      });
+      player.one('timeupdate', resolve);
+      player.play();
     }).then(function() {
       assert.notEqual(context.get('currentTime'), 0);
     });
