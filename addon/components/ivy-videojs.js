@@ -57,13 +57,6 @@ export default Ember.Component.extend({
     this.set('volume', player.volume());
   }),
 
-  _applyAttributesToPlayer: function(player) {
-    var playerAttributeBindings = this.playerAttributeBindings;
-    if (playerAttributeBindings.length) {
-      this._applyPlayerAttributeBindings(player, playerAttributeBindings);
-    }
-  },
-
   _applyPlayerAttribute: function(player, attrName, newValue) {
     var method = player[attrName];
 
@@ -74,35 +67,6 @@ export default Ember.Component.extend({
         method.call(player, newValue);
       }
     }
-  },
-
-  _applyPlayerAttributeBindings: function(player, playerAttributeBindings) {
-    Ember.EnumerableUtils.forEach(playerAttributeBindings, function(binding) {
-      var colonIndex = binding.indexOf(':'), property, attrName;
-
-      if (colonIndex === -1) {
-        property = binding;
-        attrName = binding;
-      } else {
-        property = binding.substring(0, colonIndex);
-        attrName = binding.substring(colonIndex + 1);
-      }
-
-      var propertyValue = this.get(property);
-
-      // If the property is null or undefined, read the value from the player
-      // as a default value. This way we automatically pick up defaults from
-      // video.js without having to specify them here.
-      if (Ember.isNone(propertyValue)) {
-        propertyValue = player[attrName].call(player);
-        this.set(property, propertyValue);
-      }
-
-      this._setupPlayerAttributeBindingObservation(player, property, attrName);
-
-      // Set the initial player value.
-      this._applyPlayerAttribute(player, attrName, propertyValue);
-    }, this);
   },
 
   _autoresizePlayer: function(player) {
@@ -118,10 +82,13 @@ export default Ember.Component.extend({
   },
 
   _didInitPlayer: function(player) {
-    this._applyAttributesToPlayer(player);
+    this._setupPlayerAttributes(player);
+    this._setupPlayerEvents(player);
     this._setupAutoresize(player);
 
-    this.sendAction('ready');
+    Ember.run(this, function() {
+      this.sendAction('ready');
+    });
 
     this.one('willDestroyElement', function() {
       player.dispose();
@@ -134,8 +101,7 @@ export default Ember.Component.extend({
     var options = {};
 
     videojs(element, options, function() {
-      self._setupPlayerEvents(this);
-      Ember.run(self, self._didInitPlayer, this);
+      self._didInitPlayer(this);
     });
   }),
 
@@ -161,8 +127,10 @@ export default Ember.Component.extend({
     this._registerPlayerObserver('autoresize', this, observer);
     this._registerPlayerObserver('naturalAspectRatio', this, observer);
 
-    // Set the initial player size.
-    Ember.run.scheduleOnce('render', this, observer);
+    Ember.run(this, function() {
+      // Set the initial player size.
+      Ember.run.scheduleOnce('render', this, observer);
+    });
   },
 
   _setupPlayerAttributeBindingObservation: function(player, property, attrName) {
@@ -172,6 +140,39 @@ export default Ember.Component.extend({
     };
 
     this._registerPlayerObserver(property, this, observer);
+
+    Ember.run(this, function() {
+      if (this.isDestroyed) { return; }
+
+      var propertyValue = this.get(property);
+
+      // If the property is null or undefined, read the value from the player
+      // as a default value. This way we automatically pick up defaults from
+      // video.js without having to specify them here.
+      if (Ember.isNone(propertyValue)) {
+        propertyValue = player[attrName].call(player);
+        this.set(property, propertyValue);
+      }
+
+      // Set the initial player value.
+      this._applyPlayerAttribute(player, attrName, propertyValue);
+    });
+  },
+
+  _setupPlayerAttributes: function(player) {
+    Ember.EnumerableUtils.forEach(this.playerAttributeBindings, function(binding) {
+      var colonIndex = binding.indexOf(':'), property, attrName;
+
+      if (colonIndex === -1) {
+        property = binding;
+        attrName = binding;
+      } else {
+        property = binding.substring(0, colonIndex);
+        attrName = binding.substring(colonIndex + 1);
+      }
+
+      this._setupPlayerAttributeBindingObservation(player, property, attrName);
+    }, this);
   },
 
   _setupPlayerEventHandler: function(player, event, eventName) {
