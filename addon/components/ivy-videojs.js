@@ -70,6 +70,10 @@ export default Ember.Component.extend({
   },
 
   _autoresizePlayer: function(player) {
+    // Bail out early if the component is destroyed or in the process of being
+    // destroyed. Setting a property on a destroyed object results in an error.
+    if (this.isDestroying || this.isDestroyed) { return; }
+
     if (!this.get('autoresize')) { return; }
 
     var naturalAspectRatio = this.get('naturalAspectRatio');
