@@ -98,7 +98,7 @@ export default Ember.Component.extend({
   _initPlayer: Ember.on('didInsertElement', function() {
     var self = this;
     var element = this.get('element');
-    var options = {};
+    var options = this.get('setup') || {};
 
     videojs(element, options, function() {
       self._didInitPlayer(this);
