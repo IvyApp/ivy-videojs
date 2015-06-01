@@ -4,6 +4,8 @@
 
 A set of [Ember](http://emberjs.com/) components for the [video.js](http://www.videojs.com/) HTML5 video player.
 
+**NOTE:** Currently only the HTML5 video tech is supported.
+
 ## Installation
 
 From the root of your [ember-cli](http://www.ember-cli.com/) application:
