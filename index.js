@@ -32,6 +32,6 @@ module.exports = {
       production:  path.join(app.bowerDirectory, 'video.js/dist/video.min.js')
     });
 
-    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js.swf'));
+    app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js.swf'), { destDir: 'assets' });
   }
 };
