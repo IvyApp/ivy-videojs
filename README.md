@@ -4,7 +4,7 @@
 
 A set of [Ember](http://emberjs.com/) components for the [video.js](http://www.videojs.com/) HTML5 video player.
 
-**NOTE:** Currently only the HTML5 video tech is supported.
+**NOTE:** Currently only the HTML5 video tech is supported. The Flash player is broken due to the fact that video.js removes the (Ember-managed) `<video>` element from the DOM when using anything other than the native HTML5 video tech.
 
 ## Installation
 
