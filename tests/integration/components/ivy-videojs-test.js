@@ -55,7 +55,13 @@ function techTests(techName, options) {
       var player = videojs.getPlayers()['ivy-videojs'];
 
       return new Ember.RSVP.Promise(function(resolve) {
-        player.one('timeupdate', resolve);
+        // Wait 250ms before beginning to listen for `timeupdate`, since
+        // browsers aren't particularly consistent about when they fire it
+        // (Firefox, I'm looking at you).
+        setTimeout(function() {
+          player.one('timeupdate', resolve);
+        }, 250);
+
         player.play();
       }).then(function() {
         assert.notEqual(context.get('currentTime'), 0);
