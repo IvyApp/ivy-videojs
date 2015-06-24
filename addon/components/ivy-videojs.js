@@ -164,7 +164,8 @@ export default Ember.Component.extend({
   },
 
   _setupPlayerAttributes: function(player) {
-    Ember.EnumerableUtils.forEach(this.playerAttributeBindings, function(binding) {
+    for (var idx = 0; idx < this.playerAttributeBindings.length; idx++) {
+      var binding = this.playerAttributeBindings[idx];
       var colonIndex = binding.indexOf(':'), property, attrName;
 
       if (colonIndex === -1) {
@@ -176,7 +177,7 @@ export default Ember.Component.extend({
       }
 
       this._setupPlayerAttributeBindingObservation(player, property, attrName);
-    }, this);
+    }
   },
 
   _setupPlayerEventHandler: function(player, event, eventName) {
