@@ -5,7 +5,7 @@ import {
 
 setResolver(resolver);
 
-import TechFaker from 'ivy-videojs/tech-faker';
+import TechFaker from './helpers/tech-faker';
 import videojs from 'videojs';
 
 videojs.registerComponent('TechFaker', TechFaker);
