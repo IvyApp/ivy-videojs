@@ -46,6 +46,10 @@ class TechFaker extends Tech {
     return this._autoplay;
   }
 
+  controls() {
+    return false;
+  }
+
   currentTime() {
     return this._currentTime;
   }
