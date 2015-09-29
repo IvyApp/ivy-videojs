@@ -78,14 +78,7 @@ function techTests(techName, options) {
       context.on('ready', resolve);
       context.render(template);
     }).then(function() {
-      var player = videojs.getPlayers()['ivy-videojs'];
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('durationchange', resolve);
-        player.load();
-      }).then(function() {
-        assert.notEqual(context.get('duration'), 0);
-      });
+      assert.notEqual(context.get('duration'), 0);
     });
   });
 
