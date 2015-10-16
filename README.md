@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master)](https://travis-ci.org/IvyApp/ivy-videojs)
 
-A set of [Ember](http://emberjs.com/) components for the [video.js](http://www.videojs.com/) HTML5 video player.
+An [Ember](http://emberjs.com/) component for the [video.js](http://www.videojs.com/) HTML5 video player.
 
 **NOTE:** Currently only the HTML5 video tech is supported. The Flash player is broken due to the fact that video.js removes the (Ember-managed) `<video>` element from the DOM when using anything other than the native HTML5 video tech.
 
@@ -16,46 +16,54 @@ ember install:addon ivy-videojs
 
 ## Usage
 
-Use the `ivy-videojs` component as you would a `video` tag, and the `ivy-videojs-source` component as you would a `source` tag:
+Use the `ivy-videojs` component as you would a `video` tag, either by passing in the src as a string:
 
 ```handlebars
-{{#ivy-videojs poster="/path/to/poster.jpg"}}
-  {{ivy-videojs-source src="/path/to/video.mp4" type="video/mp4"}}
-  {{ivy-videojs-source src="/path/to/video.webm" type="video/webm"}}
-  {{ivy-videojs-source src="/path/to/video.ogv" type="video/ogg"}}
-{{/ivy-videojs}}
+{{ivy-videojs src="/path/to/video.mp4"}}
 ```
 
-The following video.js properties can be bound to the `ivy-videojs` component:
+or binding the src to an object:
 
-* `autoplay`
-* `controls`
-* `currentTime`
-* `duration`
-* `height` (as `currentHeight`)
-* `loop`
-* `muted`
-* `playbackRate`
-* `poster`
-* `preload`
-* `volume`
-* `width` (as `currentWidth`)
+```handlebars
+{{ivy-videojs src=src}}
+```
 
-For example usage, take a look at the dummy app's [index.hbs template](tests/dummy/app/templates/index.hbs).
+```js
+// in your controller...
+
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  src: { src: '/path/to/video.mp4', type: 'video/mp4' }
+});
+```
+
+or even to an array:
+
+```js
+// in your controller...
+
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  src: [
+    { src: '/path/to/video.mp4', type: 'video/mp4' },
+    { src: '/path/to/video.webm', type: 'video/webm' }
+  ]
+});
+```
+
+The src can be anything supported by video.js. See the [Player API docs](http://docs.videojs.com/docs/api/player.html#Methodssrc) for examples.
 
 ### Responsive Videos
 
-If you want your video to automatically fill its container, set `naturalHeight` and `naturalWidth` to the dimensions of the video. These are used for calculating an aspect ratio, so you can just make up some values if you don't know the exact size of the video beforehand.
-
-Once you've specified dimensions, simply set the `autoresize` property to true. The video will now resize to fill its container, and will automatically resize itself when the window size changes.
-
-Example:
+As of video.js 5.0, there is now native support for responsive videos. To use this, set the `fluid` property to true:
 
 ```handlebars
-{{#ivy-videojs autoresize=true naturalWidth=1280 naturalHeight=720}}
-  ...
-{{/ivy-videojs}}
+{{ivy-videojs fluid=true src="/path/to/video.mp4"}}
 ```
+
+See the [Player API docs](http://docs.videojs.com/docs/api/player.html#Methodsfluid) for more details.
 
 ## Development
 

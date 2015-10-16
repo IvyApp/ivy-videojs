@@ -1,175 +1,143 @@
 import Ember from 'ember';
-import videojs from 'videojs';
+import hbs from 'htmlbars-inline-precompile';
 import { moduleForComponent, test } from 'ember-qunit';
 
-var template =
-  '{{#ivy-videojs autoplay=autoplay autoresize=autoresize controls=controls currentHeight=currentHeight currentTime=currentTime currentWidth=currentWidth id="ivy-videojs" loop=loop muted=muted naturalHeight=naturalHeight naturalWidth=naturalWidth playbackRate=playbackRate poster=poster preload=preload ready="ready" setup=setup volume=volume}}' +
-  '  {{ivy-videojs-source src="assets/small.mp4" type="video/mp4"}}' +
-  '  {{ivy-videojs-source src="assets/small.webm" type="video/webm"}}' +
-  '{{/ivy-videojs}}';
+moduleForComponent('ivy-videojs', 'Integration | Component | ivy-videojs', {
+  integration: true
+});
 
-function techTests(techName, options) {
-  var tech = videojs.getComponent(techName);
+test('it sends a "durationchange" action when the duration can be determined', function(assert) {
+  assert.expect(1);
 
-  // Skip any missing or unsupported techs.
-  if (!tech || !tech.isSupported()) { return; }
-
-  moduleForComponent('ivy-videojs', 'Integration | Component | ivy-videojs | ' + techName, {
-    integration: true
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('durationchange', resolve);
+    this.render(hbs`{{ivy-videojs durationchange="durationchange" src="assets/small.mp4"}}`);
+  }).then((player) => {
+    assert.notEqual(0, player.duration());
   });
+});
 
-  test('should update currentTime on seeked', function(assert) {
-    this.set('setup', options);
+test('it sends a "play" action when played via the player API', function(assert) {
+  assert.expect(2);
 
-    var context = this;
-
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', resolve);
-      context.render(template);
-    }).then(function() {
-      var player = videojs.getPlayers()['ivy-videojs'];
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('loadedmetadata', resolve);
-        player.load();
-      }).then(function() {
-        return new Ember.RSVP.Promise(function(resolve) {
-          player.one('seeked', resolve);
-          player.currentTime(2);
-        });
-      }).then(function() {
-        assert.equal(context.get('currentTime'), 2);
-      });
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.ok(player.paused());
+      this.on('play', resolve);
+      player.play();
     });
+
+    this.render(hbs`{{ivy-videojs play="play" ready="ready" src="assets/small.mp4"}}`);
+  }).then((player) => {
+    assert.ok(!player.paused());
   });
+});
 
-  test('should update currentTime on timeUpdate', function(assert) {
-    this.set('setup', options);
+test('it sends a "ratechange" action when playbackRate is changed via the player API', function(assert) {
+  assert.expect(2);
 
-    var context = this;
-
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', resolve);
-      context.render(template);
-    }).then(function() {
-      var player = videojs.getPlayers()['ivy-videojs'];
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        // Wait 250ms before beginning to listen for `timeupdate`, since
-        // browsers aren't particularly consistent about when they fire it
-        // (Firefox, I'm looking at you).
-        setTimeout(function() {
-          player.one('timeupdate', resolve);
-        }, 250);
-
-        player.play();
-      }).then(function() {
-        assert.notEqual(context.get('currentTime'), 0);
-      });
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.equal(1.0, player.playbackRate());
+      this.on('ratechange', resolve);
+      player.playbackRate(1.5);
     });
+
+    this.render(hbs`{{ivy-videojs ratechange="ratechange" ready="ready"}}`);
+  }).then((player) => {
+    assert.equal(1.5, player.playbackRate());
   });
+});
 
-  test('should update duration on durationChange', function(assert) {
-    this.set('setup', options);
+test('it sends a "volumechange" action when muted is changed via bindings', function(assert) {
+  assert.expect(2);
 
-    var context = this;
-
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', resolve);
-      context.render(template);
-    }).then(function() {
-      assert.notEqual(context.get('duration'), 0);
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.ok(!player.muted());
+      this.on('volumechange', resolve);
+      this.set('muted', true);
     });
+
+    this.render(hbs`{{ivy-videojs muted=muted ready="ready" src="assets/small.mp4" volumechange="volumechange"}}`);
+  }).then((player) => {
+    assert.ok(player.muted());
   });
+});
 
-  test('should update muted on volumeChange', function(assert) {
-    this.set('setup', options);
+test('it sends a "volumechange" action when muted is changed via the player API', function(assert) {
+  assert.expect(2);
 
-    var context = this;
-
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', resolve);
-      context.render(template);
-    }).then(function() {
-      var player = videojs.getPlayers()['ivy-videojs'];
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('volumechange', resolve);
-        player.muted(true);
-      }).then(function() {
-        assert.equal(context.get('muted'), true);
-      });
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.ok(!player.muted());
+      this.on('volumechange', resolve);
+      player.muted(true);
     });
+
+    this.render(hbs`{{ivy-videojs ready="ready" src="assets/small.mp4" volumechange="volumechange"}}`);
+  }).then((player) => {
+    assert.ok(player.muted());
   });
+});
 
-  test('should update volume on volumeChange', function(assert) {
-    this.set('setup', options);
+test('it sends a "volumechange" action when volume is changed via bindings', function(assert) {
+  assert.expect(2);
 
-    var context = this;
-
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', resolve);
-      context.render(template);
-    }).then(function() {
-      var player = videojs.getPlayers()['ivy-videojs'];
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        player.one('volumechange', resolve);
-        player.volume(0.5);
-      }).then(function() {
-        assert.equal(context.get('volume'), 0.5);
-      });
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.notEqual(0.5, player.volume());
+      this.on('volumechange', resolve);
+      this.set('volume', 0.5);
     });
+
+    this.render(hbs`{{ivy-videojs ready="ready" volume=volume volumechange="volumechange"}}`);
+  }).then((player) => {
+    assert.equal(0.5, player.volume());
   });
+});
 
-  test('should fill its parent container when autoresize is true', function(assert) {
-    this.set('setup', options);
-    this.set('autoresize', true);
-    this.set('naturalHeight', 320);
-    this.set('naturalWidth', 560);
+test('it sends a "volumechange" action when volume is changed via the player API', function(assert) {
+  assert.expect(2);
 
-    var context = this;
+  return new Ember.RSVP.Promise((resolve) => {
+    this.on('ready', (player) => {
+      assert.notEqual(0.5, player.volume());
+      this.on('volumechange', resolve);
+      player.volume(0.5);
+    });
 
-    return new Ember.RSVP.Promise(function(resolve) {
-      context.on('ready', function() {
-        Ember.run.scheduleOnce('afterRender', resolve);
+    this.render(hbs`{{ivy-videojs ready="ready" volumechange="volumechange"}}`);
+  }).then((player) => {
+    assert.equal(0.5, player.volume());
+  });
+});
+
+function propertyBindingTests(property, initialValue, updatedValue) {
+  test(`it updates the "${property}" property of the player via bindings`, function(assert) {
+    assert.expect(2);
+
+    this.set(property, initialValue);
+
+    return new Ember.RSVP.Promise((resolve) => {
+      this.on('ready', resolve);
+      this.render(Ember.HTMLBars.compile(`{{ivy-videojs ${property}=${property} ready="ready"}}`));
+    }).then((player) => {
+      assert.equal(initialValue, player[property]());
+
+      Ember.run(this, function() {
+        this.set(property, updatedValue);
       });
 
-      context.render(template);
-    }).then(function() {
-      assert.equal(context.get('currentWidth'), context.$().width());
+      assert.equal(updatedValue, player[property]());
     });
   });
-
-  function videojsPropertyTest(property, attrName, value) {
-    test('should bind ' + property + ' property to player ' + attrName + ' attribute', function(assert) {
-      this.set('setup', options);
-      this.set(property, value);
-
-      var context = this;
-
-      return new Ember.RSVP.Promise(function(resolve) {
-        context.on('ready', resolve);
-        context.render(template);
-      }).then(function() {
-        var player = videojs.getPlayers()['ivy-videojs'];
-
-        assert.equal(player[attrName](), value);
-      });
-    });
-  }
-
-  videojsPropertyTest('autoplay', 'autoplay', true);
-  videojsPropertyTest('controls', 'controls', true);
-  videojsPropertyTest('currentHeight', 'height', 320);
-  videojsPropertyTest('currentWidth', 'width', 560);
-  videojsPropertyTest('loop', 'loop', true);
-  videojsPropertyTest('muted', 'muted', true);
-  videojsPropertyTest('playbackRate', 'playbackRate', 1.5);
-  videojsPropertyTest('poster', 'poster', 'assets/small.png');
-  videojsPropertyTest('preload', 'preload', 'none');
-  videojsPropertyTest('volume', 'volume', 0.5);
 }
 
-techTests('Html5', { techOrder: ['html5'] });
-techTests('TechFaker', { techOrder: ['techFaker'] });
+propertyBindingTests('autoplay', false, true);
+propertyBindingTests('controls', false, true);
+propertyBindingTests('fluid', false, true);
+propertyBindingTests('loop', false, true);
+propertyBindingTests('muted', false, true);
+propertyBindingTests('playbackRate', 1.0, 1.5);
+propertyBindingTests('volume', 1.0, 0.5);

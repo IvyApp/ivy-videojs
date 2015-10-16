@@ -6,111 +6,82 @@ export default Ember.Component.extend({
 
   classNames: ['video-js'],
 
-  concatenatedProperties: ['playerAttributeBindings'],
-
-  playerEvents: {
-    durationchange : 'durationChange',
-    loadedmetadata : 'loadedMetadata',
-    play           : 'play',
-    resize         : 'resize',
-    seeked         : 'seeked',
-    timeupdate     : 'timeUpdate',
-    volumechange   : 'volumeChange'
-  },
-
   playerAttributeBindings: [
     'autoplay',
     'controls',
-    'currentHeight:height',
-    'currentWidth:width',
+    'fluid',
+    'height',
     'loop',
     'muted',
     'playbackRate',
     'poster',
     'preload',
-    'volume'
+    'src',
+    'volume',
+    'width'
   ],
 
-  autoresize: false,
+  playerEvents: [
+    'abort',
+    'canplay',
+    'canplaythrough',
+    'durationchange',
+    'emptied',
+    'ended',
+    'error',
+    'loadeddata',
+    'loadedmetadata',
+    'loadstart',
+    'pause',
+    'play',
+    'playing',
+    'progress',
+    'ratechange',
+    'resize',
+    'seeked',
+    'seeking',
+    'stalled',
+    'suspend',
+    'timeupdate',
+    'useractive',
+    'userinactive',
+    'volumechange',
+    'waiting'
+  ],
 
-  currentTimeDidChange: Ember.on('seeked', 'timeUpdate', function(player) {
-    this.set('currentTime', player.currentTime());
-  }),
+  didInsertElement() {
+    let player = videojs(this.get('element'));
 
-  dimensionsDidChange: Ember.on('resize', function(player) {
-    this.setProperties({
-      currentHeight: player.height(),
-      currentWidth:  player.width()
+    player.ready(() => {
+      this._playerBecameReady(player);
     });
-  }),
+  },
 
-  durationDidChange: Ember.on('durationChange', function(player) {
-    this.set('duration', player.duration());
-  }),
-
-  naturalAspectRatio: Ember.computed(function() {
-    return this.get('naturalHeight') / this.get('naturalWidth');
-  }).property('naturalHeight', 'naturalWidth'),
-
-  volumeDidChange: Ember.on('volumeChange', function(player) {
-    this.set('muted', player.muted());
-    this.set('volume', player.volume());
-  }),
-
-  _applyPlayerAttribute: function(player, attrName, newValue) {
-    var method = player[attrName];
+  _applyPlayerAttribute(player, attrName, newValue) {
+    let method = player[attrName];
 
     if (method) {
-      var oldValue = method.call(player);
+      let oldValue = method.call(player);
 
-      if (oldValue !== newValue) {
+      if (newValue !== oldValue) {
         method.call(player, newValue);
       }
     }
   },
 
-  _autoresizePlayer: function(player) {
-    // Bail out early if the component is destroyed or in the process of being
-    // destroyed. Setting a property on a destroyed object results in an error.
-    if (this.isDestroying || this.isDestroyed) { return; }
-
-    if (!this.get('autoresize')) { return; }
-
-    var naturalAspectRatio = this.get('naturalAspectRatio');
-    var parentWidth = Ember.$(player.el().parentNode).width();
-
-    this.setProperties({
-      currentHeight: parentWidth * naturalAspectRatio,
-      currentWidth:  parentWidth
-    });
-  },
-
-  _didInitPlayer: function(player) {
+  _playerBecameReady(player) {
     this._setupPlayerAttributes(player);
     this._setupPlayerEvents(player);
-    this._setupAutoresize(player);
-
-    Ember.run(this, function() {
-      this.sendAction('ready');
-    });
 
     this.one('willDestroyElement', function() {
       player.dispose();
     });
+
+    this.sendAction('ready', player);
   },
 
-  _initPlayer: Ember.on('didInsertElement', function() {
-    var self = this;
-    var element = this.get('element');
-    var options = this.get('setup') || {};
-
-    videojs(element, options, function() {
-      self._didInitPlayer(this);
-    });
-  }),
-
-  _registerPlayerObserver: function(property, target, observer) {
-    var scheduledObserver = function() {
+  _registerPlayerObserver(property, target, observer) {
+    let scheduledObserver = function() {
       Ember.run.scheduleOnce('render', this, observer);
     };
 
@@ -121,52 +92,22 @@ export default Ember.Component.extend({
     });
   },
 
-  _setupAutoresize: function(player) {
-    this._setupResizeListener(player);
-
-    var observer = function() {
-      this._autoresizePlayer(player);
-    };
-
-    this._registerPlayerObserver('autoresize', this, observer);
-    this._registerPlayerObserver('naturalAspectRatio', this, observer);
-
-    Ember.run(this, function() {
-      // Set the initial player size.
-      Ember.run.scheduleOnce('render', this, observer);
-    });
-  },
-
-  _setupPlayerAttributeBindingObservation: function(player, property, attrName) {
-    var observer = function() {
-      var propertyValue = this.get(property);
+  _setupPlayerAttributeBindingObservation(player, property, attrName) {
+    let observer = function() {
+      let propertyValue = this.get(property);
       this._applyPlayerAttribute(player, attrName, propertyValue);
     };
 
     this._registerPlayerObserver(property, this, observer);
 
-    Ember.run(this, function() {
-      if (this.isDestroyed) { return; }
-
-      var propertyValue = this.get(property);
-
-      // If the property is null or undefined, read the value from the player
-      // as a default value. This way we automatically pick up defaults from
-      // video.js without having to specify them here.
-      if (Ember.isNone(propertyValue)) {
-        propertyValue = player[attrName].call(player);
-        this.set(property, propertyValue);
-      }
-
-      // Set the initial player value.
-      this._applyPlayerAttribute(player, attrName, propertyValue);
-    });
+    if (!this.isDestroyed) {
+      observer.call(this);
+    }
   },
 
-  _setupPlayerAttributes: function(player) {
-    for (var idx = 0; idx < this.playerAttributeBindings.length; idx++) {
-      var binding = this.playerAttributeBindings[idx];
-      var colonIndex = binding.indexOf(':'), property, attrName;
+  _setupPlayerAttributes(player) {
+    this.playerAttributeBindings.forEach(function(binding) {
+      let colonIndex = binding.indexOf(':'), property, attrName;
 
       if (colonIndex === -1) {
         property = binding;
@@ -177,45 +118,22 @@ export default Ember.Component.extend({
       }
 
       this._setupPlayerAttributeBindingObservation(player, property, attrName);
-    }
+    }, this);
   },
 
-  _setupPlayerEventHandler: function(player, event, eventName) {
-    var handlerFunction = Ember.run.bind(this, function(e) {
-      this.trigger(eventName, player, e);
+  _setupPlayerEventHandler(player, eventName) {
+    let handlerFunction = Ember.run.bind(this, function() {
+      this.sendAction(eventName, player);
     });
 
     // Bind an event handler to the player. We don't need to worry about
     // tearing it down since video.js does that for us on dispose.
-    player.on(event, handlerFunction);
+    player.on(eventName, handlerFunction);
   },
 
-  _setupPlayerEvents: function(player) {
-    var event;
-    var events = this.get('playerEvents');
-
-    for (event in events) {
-      if (events.hasOwnProperty(event)) {
-        this._setupPlayerEventHandler(player, event, events[event]);
-      }
-    }
-  },
-
-  _setupResizeListener: function(player) {
-    var handlerFunction = Ember.run.bind(this, function() {
-      this._autoresizePlayer(player);
-    });
-
-    // Debounce the handler function so that it only fires once the window has
-    // stopped resizing for 150ms.
-    var debouncedFunction = function() {
-      Ember.run.debounce(this, handlerFunction, 150);
-    };
-
-    Ember.$(window).on('resize', debouncedFunction);
-
-    this.one('willClearRender', function() {
-      Ember.$(window).off('resize', debouncedFunction);
-    });
+  _setupPlayerEvents(player) {
+    this.playerEvents.forEach(function(eventName) {
+      this._setupPlayerEventHandler(player, eventName);
+    }, this);
   }
 });

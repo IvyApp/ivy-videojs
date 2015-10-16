@@ -8,6 +8,7 @@ module.exports = function(environment) {
     locationType: 'auto',
     contentSecurityPolicy: {
       'font-src': "'self' data:",
+      'img-src': "'self' http://video-js.zencoder.com",
       'media-src': "'self' http://vjs.zencdn.net",
       'style-src': "'self' 'unsafe-inline'"
     },

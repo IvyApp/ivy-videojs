@@ -1,76 +1,241 @@
+{{ivy-videojs
+  abort="abort"
+  canplay="canplay"
+  canplaythrough="canplaythrough"
+  controls=controls
+  durationchange="durationchange"
+  emptied="emptied"
+  ended="ended"
+  error="error"
+  fluid=fluid
+  loadeddata="loadeddata"
+  loadedmetadata="loadedmetadata"
+  loadstart="loadstart"
+  loop=loop
+  muted=muted
+  pause="pause"
+  play="play"
+  playbackRate=playbackRate
+  playing="playing"
+  poster=poster
+  progress="progress"
+  ratechange="ratechange"
+  resize="resize"
+  seeked="seeked"
+  seeking="seeking"
+  src=src
+  stalled="stalled"
+  suspend="suspend"
+  timeupdate="timeupdate"
+  useractive="useractive"
+  userinactive="userinactive"
+  volume=volume
+  volumechange="volumechange"
+  waiting="waiting"
+}}
+
 <div class="row">
-  <div class="col-sm-9">
-    {{#ivy-videojs autoresize=autoresize class="vjs-default-skin" controls=controls currentHeight=currentHeight currentTime=currentTime currentWidth=currentWidth duration=duration loop=loop muted=muted naturalHeight=naturalHeight naturalWidth=naturalWidth playbackRate=playbackRate volume=volume}}
-      {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4"}}
-      {{ivy-videojs-source src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm"}}
-    {{/ivy-videojs}}
+  <div class="col-sm-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Bindings Example</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-group">
+          <label class="control-label" for="volume"><code>volume</code></label>
+          {{input id="volume" max=1 min=0 step=0.01 type="range" value=volume}}
+          <small class="help-block">{{volume}}</small>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="playbackRate"><code>playbackRate</code></label>
+          {{input id="playbackRate" max=5 min=0.5 step=0.5 type="range" value=playbackRate}}
+          <small class="help-block">{{playbackRate}}</small>
+        </div>
+        <div class="checkbox">
+          <label>{{input checked=controls type="checkbox"}} <code>controls</code></label>
+        </div>
+        <div class="checkbox">
+          <label>{{input checked=fluid type="checkbox"}} <code>fluid</code></label>
+        </div>
+        <div class="checkbox">
+          <label>{{input checked=loop type="checkbox"}} <code>loop</code></label>
+        </div>
+        <div class="checkbox">
+          <label>{{input checked=muted type="checkbox"}} <code>muted</code></label>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="col-sm-3">
-    <div class="form-group">
-      <label class="control-label" for="currentTime">currentTime</label>
-      {{input id="currentTime" max=duration min=0 readonly=true step=0.25 type="range" value=currentTime}}
-      <small class="help-block">{{currentTime}}</small>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label" for="volume">volume</label>
-      {{input id="volume" max=1 min=0 step=0.01 type="range" value=volume}}
-      <small class="help-block">{{volume}}</small>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label" for="playbackRate">playbackRate</label>
-      {{input id="playbackRate" max=5 min=0.5 step=0.5 type="range" value=playbackRate}}
-      <small class="help-block">{{playbackRate}}</small>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="control-label" for="currentWidth">currentWidth</label>
-          {{input class="form-control" id="currentWidth" type="number" value=currentWidth}}
-        </div>
+  <div class="col-sm-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Media Properties</h3>
       </div>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>currentSrc</code></td>
+            <td>{{currentSrc}}</td>
+          </tr>
+          <tr>
+            <td><code>currentTime</code></td>
+            <td>{{currentTime}}</td>
+          </tr>
+          <tr>
+            <td><code>duration</code></td>
+            <td>{{duration}}</td>
+          </tr>
+          <tr>
+            <td><code>muted</code></td>
+            <td>{{muted}}</td>
+          </tr>
+          <tr>
+            <td><code>paused</code></td>
+            <td>{{paused}}</td>
+          </tr>
+          <tr>
+            <td><code>poster</code></td>
+            <td>{{poster}}</td>
+          </tr>
+          <tr>
+            <td><code>playbackRate</code></td>
+            <td>{{playbackRate}}</td>
+          </tr>
+          <tr>
+            <td><code>seeking</code></td>
+            <td>{{seeking}}</td>
+          </tr>
+          <tr>
+            <td><code>volume</code></td>
+            <td>{{volume}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="control-label" for="currentHeight">currentHeight</label>
-          {{input class="form-control" id="currentHeight" type="number" value=currentHeight}}
-        </div>
+  <div class="col-sm-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Media Events</h3>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="control-label" for="naturalWidth">naturalWidth</label>
-          {{input class="form-control" id="naturalWidth" type="number" value=naturalWidth}}
-        </div>
-      </div>
-
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="control-label" for="naturalHeight">naturalHeight</label>
-          {{input class="form-control" id="naturalHeight" type="number" value=naturalHeight}}
-        </div>
-      </div>
-    </div>
-
-    <div class="checkbox">
-      <label>{{input checked=autoresize type="checkbox"}} autoresize</label>
-    </div>
-
-    <div class="checkbox">
-      <label>{{input checked=controls type="checkbox"}} controls</label>
-    </div>
-
-    <div class="checkbox">
-      <label>{{input checked=loop type="checkbox"}} loop</label>
-    </div>
-
-    <div class="checkbox">
-      <label>{{input checked=muted type="checkbox"}} muted</label>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Times Fired</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>abort</code></td>
+            <td>{{abortCount}}</td>
+          </tr>
+          <tr>
+            <td><code>canplay</code></td>
+            <td>{{canplayCount}}</td>
+          </tr>
+          <tr>
+            <td><code>canplaythrough</code></td>
+            <td>{{canplaythroughCount}}</td>
+          </tr>
+          <tr>
+            <td><code>durationchange</code></td>
+            <td>{{durationchangeCount}}</td>
+          </tr>
+          <tr>
+            <td><code>emptied</code></td>
+            <td>{{emptiedCount}}</td>
+          </tr>
+          <tr>
+            <td><code>ended</code></td>
+            <td>{{endedCount}}</td>
+          </tr>
+          <tr>
+            <td><code>error</code></td>
+            <td>{{errorCount}}</td>
+          </tr>
+          <tr>
+            <td><code>loadeddata</code></td>
+            <td>{{loadeddataCount}}</td>
+          </tr>
+          <tr>
+            <td><code>loadedmetadata</code></td>
+            <td>{{loadedmetadataCount}}</td>
+          </tr>
+          <tr>
+            <td><code>loadstart</code></td>
+            <td>{{loadstartCount}}</td>
+          </tr>
+          <tr>
+            <td><code>pause</code></td>
+            <td>{{pauseCount}}</td>
+          </tr>
+          <tr>
+            <td><code>play</code></td>
+            <td>{{playCount}}</td>
+          </tr>
+          <tr>
+            <td><code>playing</code></td>
+            <td>{{playingCount}}</td>
+          </tr>
+          <tr>
+            <td><code>progress</code></td>
+            <td>{{progressCount}}</td>
+          </tr>
+          <tr>
+            <td><code>ratechange</code></td>
+            <td>{{ratechangeCount}}</td>
+          </tr>
+          <tr>
+            <td><code>resize</code></td>
+            <td>{{resizeCount}}</td>
+          </tr>
+          <tr>
+            <td><code>seeked</code></td>
+            <td>{{seekedCount}}</td>
+          </tr>
+          <tr>
+            <td><code>seeking</code></td>
+            <td>{{seekingCount}}</td>
+          </tr>
+          <tr>
+            <td><code>stalled</code></td>
+            <td>{{stalledCount}}</td>
+          </tr>
+          <tr>
+            <td><code>suspend</code></td>
+            <td>{{suspendCount}}</td>
+          </tr>
+          <tr>
+            <td><code>timeupdate</code></td>
+            <td>{{timeupdateCount}}</td>
+          </tr>
+          <tr>
+            <td><code>useractive</code></td>
+            <td>{{useractiveCount}}</td>
+          </tr>
+          <tr>
+            <td><code>userinactive</code></td>
+            <td>{{userinactiveCount}}</td>
+          </tr>
+          <tr>
+            <td><code>volumechange</code></td>
+            <td>{{volumechangeCount}}</td>
+          </tr>
+          <tr>
+            <td><code>waiting</code></td>
+            <td>{{waitingCount}}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
