@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master)](https://travis-ci.org/IvyApp/ivy-videojs)
 
-An [Ember](http://emberjs.com/) component for the [video.js](http://www.videojs.com/) HTML5 video player.
+Simple [Ember](http://emberjs.com/) integration for the [video.js](http://www.videojs.com/) HTML5 video player.
 
 **NOTE:** Currently only the HTML5 video tech is supported. The Flash player is broken due to the fact that video.js removes the (Ember-managed) `<video>` element from the DOM when using anything other than the native HTML5 video tech.
 
@@ -29,8 +29,6 @@ or binding the src to an object:
 ```
 
 ```js
-// in your controller...
-
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
@@ -41,8 +39,6 @@ export default Ember.Controller.extend({
 or even to an array:
 
 ```js
-// in your controller...
-
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
@@ -64,6 +60,133 @@ As of video.js 5.0, there is now native support for responsive videos. To use th
 ```
 
 See the [Player API docs](http://docs.videojs.com/docs/api/player.html#Methodsfluid) for more details.
+
+### Advanced Usage
+
+If you need more control over the video player, there's also an `ivy-videojs-player` component that exposes a lower-level interface to the video.js player. This can be useful if, for instance, you're using video.js plugins and need to change the way your application interacts with the video.js player. In fact, the `ivy-videojs` component is actually just a thin wrapper around the `ivy-videojs-player` component.
+
+The `ivy-videojs-player` does not bind any properties, but it does set up event handlers for the following:
+
+  * `abort`
+  * `canplay`
+  * `canplaythrough`
+  * `durationchange`
+  * `emptied`
+  * `ended`
+  * `error`
+  * `loadeddata`
+  * `loadedmetadata`
+  * `loadstart`
+  * `pause`
+  * `play`
+  * `playing`
+  * `progress`
+  * `ratechange`
+  * `resize`
+  * `seeked`
+  * `seeking`
+  * `stalled`
+  * `suspend`
+  * `timeupdate`
+  * `useractive`
+  * `userinactive`
+  * `volumechange`
+  * `waiting`
+
+Generally if you're using `ivy-videojs-player`, you'll set up a handler for the "ready" action, and then use that time to configure the player and set up any custom events or property bindings.
+
+#### Binding Properties
+
+Here's a basic example that binds the "src" attribute:
+
+```handlebars
+{{ivy-videojs-player ready="ready" src=src}}
+```
+
+```js
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  src: 'http://vjs.zencdn.net/v/oceans.mp4',
+
+  actions: {
+    ready(player, component) {
+      // This is pretty much the minimum required for a useful video player.
+      component.bindPropertyToPlayer(player, 'src');
+    }
+  }
+});
+```
+
+The above just tells `ivy-videojs-player` that its "src" property should be bound to the player's "src" property. This is fine if the component property and the player property have the same name, but what if they're different? Not to worry, that's what the optional third argument is for:
+
+```handlebars
+{{ivy-videojs-player ready="ready" sources=sources}}
+```
+
+```js
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  sources: 'http://vjs.zencdn.net/v/oceans.mp4',
+
+  actions: {
+    ready(player, component) {
+      // This will set the player's "src" property based on the component's "sources" property.
+      component.bindPropertyToPlayer(player, 'sources', 'src');
+    }
+  }
+});
+```
+
+So in the above example, the "sources" property of the component is bound to the "src" property of the player. You can think of this as essentially calling the following whenever the component's "sources" property changes:
+
+```js
+player.src(this.get('sources'));
+```
+
+#### Handling Events
+
+Much like properties, you can also handle custom player events. To do this, call the component's `sendActionOnPlayerEvent` method inside your "ready" action handler:
+
+```handlebars
+{{ivy-videojs-player ready="ready" tada="tada"}}
+```
+
+```js
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  actions: {
+    ready(player, component) {
+      // When a "tada" event is triggered on the player, a corresponding "tada"
+      // action will be sent.
+      component.sendActionOnPlayerEvent(player, 'tada');
+    },
+
+    tada(/* player, component */) {
+      // Action handlers are given any arguments passed on from video.js, but
+      // the first two arguments are always the video.js player and the
+      // component.
+    }
+  }
+});
+```
+
+As above, if the action name differs from the name of the player event, you can pass a third argument to indicate what the event name is:
+
+```js
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  actions: {
+    ready(player, component) {
+      // Now, if a "someevent" event is triggered on the player, a "tada"
+      // action will be sent.
+      component.sendActionOnPlayerEvent(player, 'tada', 'someevent');
+    }
+  }
+```
 
 ## Development
 
