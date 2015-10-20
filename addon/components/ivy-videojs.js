@@ -6,134 +6,97 @@ export default Ember.Component.extend({
 
   classNames: ['video-js'],
 
-  playerAttributeBindings: [
-    'autoplay',
-    'controls',
-    'fluid',
-    'height',
-    'loop',
-    'muted',
-    'playbackRate',
-    'poster',
-    'preload',
-    'src',
-    'volume',
-    'width'
-  ],
+  mergedProperties: ['playerEvents'],
 
-  playerEvents: [
-    'abort',
-    'canplay',
-    'canplaythrough',
-    'durationchange',
-    'emptied',
-    'ended',
-    'error',
-    'loadeddata',
-    'loadedmetadata',
-    'loadstart',
-    'pause',
-    'play',
-    'playing',
-    'progress',
-    'ratechange',
-    'resize',
-    'seeked',
-    'seeking',
-    'stalled',
-    'suspend',
-    'timeupdate',
-    'useractive',
-    'userinactive',
-    'volumechange',
-    'waiting'
-  ],
+  playerEvents: {
+    abort: 'abort',
+    canplay: 'canplay',
+    canplaythrough: 'canplaythrough',
+    durationchange: 'durationchange',
+    emptied: 'emptied',
+    ended: 'ended',
+    error: 'error',
+    loadeddata: 'loadeddata',
+    loadedmetadata: 'loadedmetadata',
+    loadstart: 'loadstart',
+    pause: 'pause',
+    play: 'play',
+    playing: 'playing',
+    progress: 'progress',
+    ratechange: 'ratechange',
+    resize: 'resize',
+    seeked: 'seeked',
+    seeking: 'seeking',
+    stalled: 'stalled',
+    suspend: 'suspend',
+    timeupdate: 'timeupdate',
+    useractive: 'useractive',
+    userinactive: 'userinactive',
+    volumechange: 'volumechange',
+    waiting: 'waiting'
+  },
+
+  bindPropertyToPlayer(player, property, playerProperty=property) {
+    let observer = function() {
+      this.setPlayerProperty(player, playerProperty, this.get(property));
+    };
+
+    let scheduledObserver = function() {
+      Ember.run.scheduleOnce('render', this, observer);
+    };
+
+    this._addPlayerObserver(property, this, scheduledObserver);
+
+    // Invoke the observer once to set the initial value on the player.
+    observer.call(this);
+  },
 
   didInsertElement() {
     let player = videojs(this.get('element'));
 
     player.ready(() => {
-      this._playerBecameReady(player);
+      this.one('willDestroyElement', function() {
+        player.dispose();
+      });
+
+      let playerEvents = this.get('playerEvents');
+      if (playerEvents) {
+        for (let key in playerEvents) {
+          this.sendActionOnPlayerEvent(player, key, playerEvents[key]);
+        }
+      }
+
+      this.sendAction('ready', player, this);
     });
   },
 
-  _applyPlayerAttribute(player, attrName, newValue) {
-    let method = player[attrName];
+  sendActionOnPlayerEvent(player, action, playerEvent=action) {
+    let listenerFunction = (...args) => {
+      this.sendAction(action, player, this, ...args);
+    };
 
-    if (method) {
-      let oldValue = method.call(player);
+    this._onPlayerEvent(player, playerEvent, listenerFunction);
+  },
 
-      if (newValue !== oldValue) {
-        method.call(player, newValue);
+  setPlayerProperty(player, playerProperty, value) {
+    let propertyMethod = player[playerProperty];
+    if (propertyMethod) {
+      let previousValue = propertyMethod.call(player);
+      if (previousValue !== value) {
+        propertyMethod.call(player, value);
       }
     }
   },
 
-  _playerBecameReady(player) {
-    this._setupPlayerAttributes(player);
-    this._setupPlayerEvents(player);
+  _addPlayerObserver(property, target, observer) {
+    this.addObserver(property, target, observer);
 
-    this.one('willDestroyElement', function() {
-      player.dispose();
-    });
-
-    this.sendAction('ready', player);
-  },
-
-  _registerPlayerObserver(property, target, observer) {
-    let scheduledObserver = function() {
-      Ember.run.scheduleOnce('render', this, observer);
-    };
-
-    this.addObserver(property, target, scheduledObserver);
-
-    this.one('willClearRender', this, function() {
-      this.removeObserver(property, target, scheduledObserver);
+    this.one('willDestroyElement', this, function() {
+      this.removeObserver(property, target, observer);
     });
   },
 
-  _setupPlayerAttributeBindingObservation(player, property, attrName) {
-    let observer = function() {
-      let propertyValue = this.get(property);
-      this._applyPlayerAttribute(player, attrName, propertyValue);
-    };
-
-    this._registerPlayerObserver(property, this, observer);
-
-    if (!this.isDestroyed) {
-      observer.call(this);
-    }
-  },
-
-  _setupPlayerAttributes(player) {
-    this.playerAttributeBindings.forEach(function(binding) {
-      let colonIndex = binding.indexOf(':'), property, attrName;
-
-      if (colonIndex === -1) {
-        property = binding;
-        attrName = binding;
-      } else {
-        property = binding.substring(0, colonIndex);
-        attrName = binding.substring(colonIndex + 1);
-      }
-
-      this._setupPlayerAttributeBindingObservation(player, property, attrName);
-    }, this);
-  },
-
-  _setupPlayerEventHandler(player, eventName) {
-    let handlerFunction = Ember.run.bind(this, function() {
-      this.sendAction(eventName, player);
-    });
-
-    // Bind an event handler to the player. We don't need to worry about
-    // tearing it down since video.js does that for us on dispose.
-    player.on(eventName, handlerFunction);
-  },
-
-  _setupPlayerEvents(player) {
-    this.playerEvents.forEach(function(eventName) {
-      this._setupPlayerEventHandler(player, eventName);
-    }, this);
+  _onPlayerEvent(player, eventName, listenerFunction) {
+    player.on(eventName, listenerFunction);
   }
 });

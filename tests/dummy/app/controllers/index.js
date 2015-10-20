@@ -67,6 +67,17 @@ export default Ember.Controller.extend({
       this.incrementProperty('ratechangeCount');
     },
 
+    ready(player, component) {
+      component.bindPropertyToPlayer(player, 'controls');
+      component.bindPropertyToPlayer(player, 'fluid');
+      component.bindPropertyToPlayer(player, 'loop');
+      component.bindPropertyToPlayer(player, 'muted');
+      component.bindPropertyToPlayer(player, 'playbackRate');
+      component.bindPropertyToPlayer(player, 'poster');
+      component.bindPropertyToPlayer(player, 'src');
+      component.bindPropertyToPlayer(player, 'volume');
+    },
+
     resize() {
       this.incrementProperty('resizeCount');
     },
