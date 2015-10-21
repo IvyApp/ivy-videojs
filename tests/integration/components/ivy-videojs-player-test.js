@@ -100,7 +100,10 @@ test('it binds a component property to a player property with a different name v
 test('it sends a "durationchange" action when the duration can be determined', function(assert) {
   assert.expect(1);
 
-  this.set('src', 'assets/small.mp4');
+  this.set('src', [
+    { src: 'assets/small.mp4', type: 'video/mp4' },
+    { src: 'assets/small.webm', type: 'video/webm' }
+  ]);
 
   return new Ember.RSVP.Promise((resolve) => {
     this.on('ready', (player, component) => {
@@ -119,7 +122,10 @@ test('it sends a "durationchange" action when the duration can be determined', f
 test('it sends a "play" action when played via the player API', function(assert) {
   assert.expect(2);
 
-  this.set('src', 'assets/small.mp4');
+  this.set('src', [
+    { src: 'assets/small.mp4', type: 'video/mp4' },
+    { src: 'assets/small.webm', type: 'video/webm' }
+  ]);
 
   return new Ember.RSVP.Promise((resolve) => {
     this.on('ready', (player, component) => {
