@@ -188,6 +188,10 @@ export default Ember.Controller.extend({
   }
 ```
 
+## Upgrading
+
+See [UPGRADING.md](https://github.com/IvyApp/ivy-videojs/blob/master/UPGRADING.md)
+
 ## Development
 
 ### Installation
