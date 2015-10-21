@@ -1,5 +1,15 @@
 # ivy-videojs Changelog
 
+## 0.6.0 (October 21, 2015)
+
+  * Upgrade ember-qunit to fix test failures on beta.
+  * Add webm sources to tests.
+  * Update README.
+  * Add a simplified `ivy-videojs` which wraps `ivy-videojs-player`.
+  * Trim off yet more fat from the component.
+  * Rewrite the component to remove two-way bindings.
+  * Add CHANGELOG.
+
 ## 0.5.0 (September 29, 2015)
 
   * Upgrade to video.js 5.0.0.
