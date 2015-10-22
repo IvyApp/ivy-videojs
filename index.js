@@ -11,6 +11,8 @@ module.exports = {
   },
 
   included: function(app) {
+    var options = app.options.videojs || {};
+
     app.import({
       development: path.join(app.bowerDirectory, 'video.js/dist/video-js.css'),
       production:  path.join(app.bowerDirectory, 'video.js/dist/video-js.min.css')
@@ -30,6 +32,10 @@ module.exports = {
     app.import({
       development: path.join(app.bowerDirectory, 'video.js/dist/video.js'),
       production:  path.join(app.bowerDirectory, 'video.js/dist/video.min.js')
+    });
+
+    (options.languages || []).forEach(function(language) {
+      app.import(path.join(app.bowerDirectory, 'video.js/dist/lang/' + language + '.js'));
     });
 
     app.import(path.join(app.bowerDirectory, 'video.js/dist/video-js.swf'), { destDir: 'assets' });

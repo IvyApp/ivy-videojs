@@ -14,6 +14,7 @@ export default Ember.Component.extend({
     'autoplay',
     'controls',
     'fluid',
+    'language',
     'loop',
     'muted',
     'playbackRate',

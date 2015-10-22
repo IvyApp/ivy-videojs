@@ -38,6 +38,7 @@ function propertyBindingTests(property, exampleValue) {
 
 propertyBindingTests('controls', true);
 propertyBindingTests('fluid', true);
+propertyBindingTests('language', 'es');
 propertyBindingTests('loop', true);
 propertyBindingTests('muted', true);
 propertyBindingTests('playbackRate', 1.5);
