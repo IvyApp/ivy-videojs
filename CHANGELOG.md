@@ -1,5 +1,9 @@
 # ivy-videojs Changelog
 
+## 0.6.1 (October 22, 2015)
+
+  * Bind `language` property to the `ivy-videojs` component. See #10.
+
 ## 0.6.0 (October 21, 2015)
 
   * Upgrade ember-qunit to fix test failures on beta.
