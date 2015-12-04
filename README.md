@@ -95,6 +95,28 @@ The `ivy-videojs-player` does not bind any properties, but it does set up event 
 
 Generally if you're using `ivy-videojs-player`, you'll set up a handler for the "ready" action, and then use that time to configure the player and set up any custom events or property bindings.
 
+#### The `setup` Property
+
+If, for some reason, you need to pass in arguments to the initial `videojs` initialization call, you can do so through a `setup` property. For instance, if you wanted to enable the playback rate menu, you could pass in `setup` in your template:
+
+```handlebars
+{{ivy-videojs setup=setup}}
+```
+
+And then in your controller, define setup like so:
+
+```js
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  setup: {
+    playbackRates: [0.5, 1, 1.5, 2]
+  }
+});
+```
+
+This is exactly what the [demo app](http://ivyapp.github.io/ivy-videojs/) does.
+
 #### Binding Properties
 
 Here's a basic example that binds the "src" attribute:

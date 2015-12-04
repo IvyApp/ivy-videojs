@@ -52,7 +52,7 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
-    let player = videojs(this.get('element'));
+    let player = videojs(this.get('element'), this.get('setup'));
 
     player.ready(() => {
       this.one('willDestroyElement', function() {

@@ -131,6 +131,9 @@ export default Ember.Controller.extend({
   muted: false,
   playbackRate: 1,
   poster: 'http://video-js.zencoder.com/oceans-clip.png',
+  setup: {
+    playbackRates: [0.5, 1, 1.5, 2]
+  },
   src: [
     { src: 'http://vjs.zencdn.net/v/oceans.mp4', type: 'video/mp4' },
     { src: 'http://vjs.zencdn.net/v/oceans.webm', type: 'video/webm' }
