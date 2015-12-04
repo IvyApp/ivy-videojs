@@ -1,5 +1,9 @@
 # ivy-videojs Changelog
 
+## 0.6.2 (December 4, 2015)
+
+  * Add a `setup` property for initial player setup.
+
 ## 0.6.1 (October 22, 2015)
 
   * Bind `language` property to the `ivy-videojs` component. See #10.
