@@ -7,9 +7,23 @@ function proxyAction(action) {
   };
 }
 
+/**
+ * Provides a simplified interface to the underlying `ivy-videojs-source`
+ * component, which should (hopefully) be sufficient for most use cases.
+ *
+ * @class
+ * @extends Ember.Component
+ */
 export default Ember.Component.extend({
   concatenatedProperties: ['playerAttributeBindings'],
 
+  /**
+   * Properties which will be bound to the video.js player.
+   *
+   * @property playerAttributeBindings
+   * @type Array
+   * @private
+   */
   playerAttributeBindings: [
     'autoplay',
     'controls',
@@ -58,6 +72,12 @@ export default Ember.Component.extend({
 
   layout: layout,
 
+  /**
+   * Set up property bindings for each property defined in
+   * `playerAttributeBindings`.
+   *
+   * @method setupPlayerAttributeBindings
+   */
   setupPlayerAttributeBindings(player, component) {
     this.get('playerAttributeBindings').forEach(function(property) {
       component.bindPropertyToPlayer(player, property);
