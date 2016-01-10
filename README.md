@@ -11,7 +11,7 @@ Simple [Ember](http://emberjs.com/) integration for the [video.js](http://www.vi
 From the root of your [ember-cli](http://www.ember-cli.com/) application:
 
 ```sh
-ember install:addon ivy-videojs
+ember install ivy-videojs
 ```
 
 ## Usage
