@@ -116,6 +116,7 @@ export default Ember.Component.extend({
       const playerEvents = this.get('playerEvents');
       if (playerEvents) {
         for (let key in playerEvents) {
+          if (!playerEvents.hasOwnProperty(key)) { continue; }
           this.sendActionOnPlayerEvent(player, key, playerEvents[key]);
         }
       }
