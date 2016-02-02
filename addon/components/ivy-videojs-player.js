@@ -83,11 +83,11 @@ export default Ember.Component.extend({
    * @see {#setPlayerProperty}
    */
   bindPropertyToPlayer(player, property, playerProperty=property) {
-    let observer = function() {
+    const observer = function() {
       this.setPlayerProperty(player, playerProperty, this.get(property));
     };
 
-    let scheduledObserver = function() {
+    const scheduledObserver = function() {
       Ember.run.scheduleOnce('render', this, observer);
     };
 
@@ -104,7 +104,7 @@ export default Ember.Component.extend({
    * @method didInsertElement
    */
   didInsertElement() {
-    let player = videojs(this.get('element'), this.get('setup'));
+    const player = videojs(this.get('element'), this.get('setup'));
 
     player.ready(() => {
       // Set up a handler to automatically dispose the player on teardown.
@@ -113,7 +113,7 @@ export default Ember.Component.extend({
       });
 
       // Set up event listeners defined in `playerEvents`.
-      let playerEvents = this.get('playerEvents');
+      const playerEvents = this.get('playerEvents');
       if (playerEvents) {
         for (let key in playerEvents) {
           this.sendActionOnPlayerEvent(player, key, playerEvents[key]);
@@ -134,7 +134,7 @@ export default Ember.Component.extend({
    * @param {String} playerEvent the player event name to listen for
    */
   sendActionOnPlayerEvent(player, action, playerEvent=action) {
-    let listenerFunction = (...args) => {
+    const listenerFunction = (...args) => {
       this.sendAction(action, player, this, ...args);
     };
 
@@ -151,9 +151,9 @@ export default Ember.Component.extend({
    * @param {Object} value the value to set
    */
   setPlayerProperty(player, playerProperty, value) {
-    let propertyMethod = player[playerProperty];
+    const propertyMethod = player[playerProperty];
     if (propertyMethod) {
-      let previousValue = propertyMethod.call(player);
+      const previousValue = propertyMethod.call(player);
       if (previousValue !== value) {
         propertyMethod.call(player, value);
       }
