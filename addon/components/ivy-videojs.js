@@ -34,7 +34,8 @@ export default Ember.Component.extend({
     'playbackRate',
     'poster',
     'src',
-    'volume'
+    'volume',
+    'playsinline'
   ],
 
   actions: {
