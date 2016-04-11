@@ -3,6 +3,7 @@ module.exports = {
 
   afterInstall: function() {
     return this.addBowerPackageToProject('video.js', '^5.0.0');
+    return this.addBowerPackageToProject('videojs-contrib-hls', '*');
   },
 
   normalizeEntityName: function() {
