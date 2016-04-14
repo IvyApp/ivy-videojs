@@ -34,6 +34,11 @@ module.exports = {
       production:  path.join(app.bowerDirectory, 'video.js/dist/video.min.js')
     });
 
+    app.import({
+      development: path.join(app.bowerDirectory, 'videojs-contrib-hls/dist/videojs-contrib-hls.js'),
+      production:  path.join(app.bowerDirectory, 'videojs-contrib-hls/dist/videojs-contrib-hls.min.js')
+    });
+
     (options.languages || []).forEach(function(language) {
       app.import(path.join(app.bowerDirectory, 'video.js/dist/lang/' + language + '.js'));
     });
