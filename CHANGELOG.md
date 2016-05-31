@@ -1,5 +1,10 @@
 # ivy-videojs Changelog
 
+## 0.6.3 (May 31, 2016)
+
+  * Merge pull request #15 from rtablada/feature/fastboot
+  * Don't import on fastboot builds
+
 ## 0.6.2 (December 4, 2015)
 
   * Add a `setup` property for initial player setup.
