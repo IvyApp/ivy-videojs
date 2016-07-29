@@ -42,5 +42,5 @@ propertyBindingTests('language', 'es');
 propertyBindingTests('loop', true);
 propertyBindingTests('muted', true);
 propertyBindingTests('playbackRate', 1.5);
-propertyBindingTests('poster', 'assets/small.png');
+propertyBindingTests('poster', '/small.png');
 propertyBindingTests('volume', 0.5);

@@ -1,7 +1,8 @@
+/*jshint node:true*/
 /* global require, module */
 var EmberApp = require('ember-cli/lib/broccoli/ember-addon');
 var path = require('path');
-var pickFiles = require('broccoli-static-compiler');
+var Funnel = require('broccoli-funnel');
 
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
@@ -21,12 +22,12 @@ module.exports = function(defaults) {
     type: 'test'
   });
 
-  var bootstrapTree = pickFiles(path.join(app.bowerDirectory, 'bootstrap/dist/css'), {
+  var bootstrapTree = new Funnel(path.join(app.bowerDirectory, 'bootstrap/dist/css'), {
     srcDir: '/',
     destDir: '/assets'
   });
 
-  var fixturesTree = pickFiles(path.join(__dirname, 'tests/fixtures'), {
+  var fixturesTree = new Funnel(path.join(__dirname, 'tests/fixtures'), {
     srcDir: '/',
     destDir: '/assets'
   });

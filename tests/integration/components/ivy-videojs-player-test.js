@@ -101,8 +101,8 @@ test('it sends a "durationchange" action when the duration can be determined', f
   assert.expect(1);
 
   this.set('src', [
-    { src: 'assets/small.mp4', type: 'video/mp4' },
-    { src: 'assets/small.webm', type: 'video/webm' }
+    { src: '/assets/small.mp4', type: 'video/mp4' },
+    { src: '/assets/small.webm', type: 'video/webm' }
   ]);
 
   return new Ember.RSVP.Promise((resolve) => {
@@ -123,8 +123,8 @@ test('it sends a "play" action when played via the player API', function(assert)
   assert.expect(2);
 
   this.set('src', [
-    { src: 'assets/small.mp4', type: 'video/mp4' },
-    { src: 'assets/small.webm', type: 'video/webm' }
+    { src: '/assets/small.mp4', type: 'video/mp4' },
+    { src: '/assets/small.webm', type: 'video/webm' }
   ]);
 
   return new Ember.RSVP.Promise((resolve) => {
