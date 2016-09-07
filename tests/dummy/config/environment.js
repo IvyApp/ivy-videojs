@@ -4,14 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
     environment: environment,
-    baseURL: '/',
+    rootURL: '/',
     locationType: 'auto',
-    contentSecurityPolicy: {
-      'font-src': "'self' data:",
-      'img-src': "'self' http://video-js.zencoder.com",
-      'media-src': "'self' http://vjs.zencdn.net",
-      'style-src': "'self' 'unsafe-inline'"
-    },
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -35,7 +29,6 @@ module.exports = function(environment) {
 
   if (environment === 'test') {
     // Testem prefers this...
-    ENV.baseURL = '/';
     ENV.locationType = 'none';
 
     // keep test console output quieter
