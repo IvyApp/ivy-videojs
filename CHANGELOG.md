@@ -1,5 +1,10 @@
 # ivy-videojs Changelog
 
+## 0.6.4 (November 8, 2016)
+
+  * Merge pull request #19 from IvyApp/ember-cli-2.9.1
+  * Upgrade to Ember CLI 2.9.1
+
 ## 0.6.3 (May 31, 2016)
 
   * Merge pull request #15 from rtablada/feature/fastboot
