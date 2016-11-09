@@ -1,6 +1,12 @@
 # ivy-videojs
 
-[![Build Status](https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master)](https://travis-ci.org/IvyApp/ivy-videojs)
+[![Latest NPM release][npm-badge]][npm-badge-url]
+[![TravisCI Build Status][travis-badge]][travis-badge-url]
+
+[npm-badge-url]: https://www.npmjs.com/package/ivy-videojs
+[npm-badge]: https://img.shields.io/npm/v/ivy-videojs.svg
+[travis-badge-url]: https://travis-ci.org/IvyApp/ivy-videojs
+[travis-badge]: https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master
 
 Simple [Ember](http://emberjs.com/) integration for the [video.js](http://www.videojs.com/) HTML5 video player.
 

@@ -1,5 +1,13 @@
 # ivy-videojs Changelog
 
+[![Latest NPM release][npm-badge]][npm-badge-url]
+[![TravisCI Build Status][travis-badge]][travis-badge-url]
+
+[npm-badge-url]: https://www.npmjs.com/package/ivy-videojs
+[npm-badge]: https://img.shields.io/npm/v/ivy-videojs.svg
+[travis-badge-url]: https://travis-ci.org/IvyApp/ivy-videojs
+[travis-badge]: https://travis-ci.org/IvyApp/ivy-videojs.svg?branch=master
+
 ## 0.6.4 (November 8, 2016)
 
   * Merge pull request #19 from IvyApp/ember-cli-2.9.1
