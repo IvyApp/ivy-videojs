@@ -10,6 +10,10 @@
 
 See [unreleased changes][HEAD].
 
+## [0.6.5][] (December 2, 2016)
+
+  * [#20](https://github.com/IvyApp/ivy-videojs/pull/20) Upgrade to Ember CLI 2.10.0
+
 ## [0.6.4][] (November 8, 2016)
 
   * [#19](https://github.com/IvyApp/ivy-videojs/pull/19) Upgrade to Ember CLI 2.9.1
@@ -149,4 +153,5 @@ See [unreleased changes][HEAD].
 [0.6.2]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.1...v0.6.2
 [0.6.3]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.2...v0.6.3
 [0.6.4]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.3...v0.6.4
-[HEAD]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.4...master
+[0.6.5]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.4...v0.6.5
+[HEAD]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.5...master
