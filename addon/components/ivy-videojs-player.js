@@ -162,6 +162,10 @@ export default Ember.Component.extend({
   },
 
   _addPlayerObserver(property, target, observer) {
+    if (this.isDestroying) {
+      return;
+    }
+
     this.addObserver(property, target, observer);
 
     this.one('willDestroyElement', this, function() {
