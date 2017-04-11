@@ -10,6 +10,10 @@
 
 See [unreleased changes][HEAD].
 
+## [0.6.6][] (April 11, 2017)
+
+  * Check for `isDestroying` when adding observers.
+
 ## [0.6.5][] (December 2, 2016)
 
   * [#20](https://github.com/IvyApp/ivy-videojs/pull/20) Upgrade to Ember CLI 2.10.0
@@ -154,4 +158,5 @@ See [unreleased changes][HEAD].
 [0.6.3]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.2...v0.6.3
 [0.6.4]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.3...v0.6.4
 [0.6.5]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.4...v0.6.5
-[HEAD]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.5...master
+[0.6.6]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.5...v0.6.6
+[HEAD]: https://github.com/IvyApp/ivy-videojs/compare/v0.6.6...master
