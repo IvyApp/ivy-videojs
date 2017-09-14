@@ -14,7 +14,6 @@ Simple [Ember](http://emberjs.com/) integration for the [video.js](http://www.vi
 
 ## Installation
 
-<<<<<<< HEAD
 From the root of your [ember-cli](http://www.ember-cli.com/) application:
 
 ```sh
@@ -228,11 +227,6 @@ See [UPGRADING.md](https://github.com/IvyApp/ivy-videojs/blob/master/UPGRADING.m
 * `git clone` this repository
 * `yarn`
 * `yarn run bower install`
-=======
-* `git clone <repository-url>` this repository
-* `cd my-addon`
-* `npm install`
->>>>>>> bc11baa... diff
 
 ### Running
 
