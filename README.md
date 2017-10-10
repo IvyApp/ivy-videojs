@@ -18,7 +18,10 @@ From the root of your [ember-cli](http://www.ember-cli.com/) application:
 
 ```sh
 ember install ivy-videojs
+ember g ivy-videojs
 ```
+
+Manually add [videojs-contrib-hls.js](https://github.com/videojs/videojs-contrib-hls/releases/download/v5.11.0/videojs-contrib-hls.js) and [videojs-contrib-hls.min.js](https://github.com/videojs/videojs-contrib-hls/releases/download/v5.11.0/videojs-contrib-hls.min.js) to the bower_components/videojs-contrib-hls/dist/ folder of your project.
 
 ## Usage
 
