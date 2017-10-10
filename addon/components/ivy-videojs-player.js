@@ -55,8 +55,6 @@ export default Ember.Component.extend({
     loadeddata: 'loadeddata',
     loadedmetadata: 'loadedmetadata',
     loadstart: 'loadstart',
-    pause: 'pause',
-    play: 'play',
     playing: 'playing',
     progress: 'progress',
     ratechange: 'ratechange',
