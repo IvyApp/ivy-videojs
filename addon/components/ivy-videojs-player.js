@@ -152,7 +152,7 @@ export default Ember.Component.extend({
    */
   setPlayerProperty(player, playerProperty, value) {
     const propertyMethod = player[playerProperty];
-    if (propertyMethod) {
+    if (propertyMethod && value !== undefined) {
       const previousValue = propertyMethod.call(player);
       if (previousValue !== value) {
         propertyMethod.call(player, value);
