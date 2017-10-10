@@ -12,7 +12,8 @@ import videojs from 'videojs';
  * @extends Ember.Component
  */
 export default Ember.Component.extend({
-  tagName: 'video',
+
+  tagName: Ember.computed.alias('type'),
 
   classNames: ['video-js'],
 
