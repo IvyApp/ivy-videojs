@@ -35,6 +35,7 @@ export default Ember.Component.extend({
     'pause',
     'playbackRate',
     'poster',
+    'preload',
     'src',
     'volume',
     'currentTime',
