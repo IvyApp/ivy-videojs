@@ -174,5 +174,10 @@ export default Ember.Component.extend({
 
   _onPlayerEvent(player, eventName, listenerFunction) {
     player.on(eventName, listenerFunction);
+  },
+
+  click(e){
+  	this.sendAction('playerclick', e);
   }
+
 });
