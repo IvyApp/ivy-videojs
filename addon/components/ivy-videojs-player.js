@@ -12,7 +12,8 @@ import videojs from 'videojs';
  * @extends Ember.Component
  */
 export default Ember.Component.extend({
-  tagName: 'video',
+
+  tagName: Ember.computed.alias('type'),
 
   classNames: ['video-js'],
 
@@ -54,8 +55,6 @@ export default Ember.Component.extend({
     loadeddata: 'loadeddata',
     loadedmetadata: 'loadedmetadata',
     loadstart: 'loadstart',
-    pause: 'pause',
-    play: 'play',
     playing: 'playing',
     progress: 'progress',
     ratechange: 'ratechange',
@@ -153,7 +152,7 @@ export default Ember.Component.extend({
    */
   setPlayerProperty(player, playerProperty, value) {
     const propertyMethod = player[playerProperty];
-    if (propertyMethod) {
+    if (propertyMethod && value !== undefined) {
       const previousValue = propertyMethod.call(player);
       if (previousValue !== value) {
         propertyMethod.call(player, value);
@@ -175,5 +174,10 @@ export default Ember.Component.extend({
 
   _onPlayerEvent(player, eventName, listenerFunction) {
     player.on(eventName, listenerFunction);
+  },
+
+  click(e){
+  	this.sendAction('playerclick', e);
   }
+
 });

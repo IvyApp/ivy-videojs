@@ -2,7 +2,10 @@ module.exports = {
   description: 'ivy-videojs',
 
   afterInstall: function() {
-    return this.addBowerPackageToProject('video.js', '~5.12');
+    return this.addBowerPackagesToProject([
+    	{ name: 'video.js', target: '~5.12'},
+    	{ name: 'videojs-contrib-hls', target: '~5.11'}
+    ]);
   },
 
   normalizeEntityName: function() {

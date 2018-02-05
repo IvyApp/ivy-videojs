@@ -1,5 +1,7 @@
 {{ivy-videojs-player
+  type=type
   abort=(action "abort")
+  autoplay=autoplay
   canplay=(action "canplay")
   canplaythrough=(action "canplaythrough")
   controls=controls
@@ -14,15 +16,20 @@
   loadstart=(action "loadstart")
   loop=loop
   muted=muted
-  pause=(action "pause")
-  play=(action "play")
+  pause=pause
+  play=play
+  currentTime=currentTime
   playbackRate=playbackRate
   playing=(action "playing")
   poster=poster
+  preload=preload
   progress=(action "progress")
   ratechange=(action "ratechange")
   ready=(action "ready")
   resize=(action "resize")
+  isFullscreen=isFullscreen
+  requestFullscreen=requestFullscreen
+  exitFullscreen=exitFullscreen
   seeked=(action "seeked")
   seeking=(action "seeking")
   setup=setup
@@ -35,4 +42,5 @@
   volume=volume
   volumechange=(action "volumechange")
   waiting=(action "waiting")
+  playerclick=(action "playerclick")
 }}
