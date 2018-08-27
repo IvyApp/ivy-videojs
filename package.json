@@ -1,52 +1,53 @@
 {
   "name": "ivy-videojs",
-  "version": "0.6.3",
+  "version": "0.6.6",
   "description": "A set of Ember components for the video.js HTML5 video player.",
-  "directories": {
-    "doc": "doc",
-    "test": "tests"
-  },
-  "scripts": {
-    "build": "ember build",
-    "start": "ember server",
-    "test": "ember try:testall"
-  },
-  "repository": "https://github.com/IvyApp/ivy-videojs",
-  "engines": {
-    "node": ">= 0.10.0"
-  },
-  "author": "Dray Lacy",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/IvyApp/ivy-videojs/issues"
-  },
-  "devDependencies": {
-    "broccoli-static-compiler": "0.2.1",
-    "broccoli-asset-rev": "^2.1.2",
-    "ember-cli": "1.13.8",
-    "ember-cli-app-version": "0.5.0",
-    "ember-cli-content-security-policy": "0.4.0",
-    "ember-cli-dependency-checker": "^1.0.1",
-    "ember-cli-htmlbars-inline-precompile": "^0.2.0",
-    "ember-cli-ic-ajax": "0.2.1",
-    "ember-cli-inject-live-reload": "^1.3.1",
-    "ember-cli-qunit": "^1.0.0",
-    "ember-cli-release": "0.2.3",
-    "ember-cli-sri": "^1.0.3",
-    "ember-cli-uglify": "^1.2.0",
-    "ember-disable-proxy-controllers": "^1.0.0",
-    "ember-export-application-global": "^1.0.3",
-    "ember-disable-prototype-extensions": "^1.0.0",
-    "ember-try": "0.0.6"
-  },
   "keywords": [
     "ember-addon",
     "video",
     "videojs"
   ],
+  "license": "MIT",
+  "author": "Dray Lacy",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "repository": "https://github.com/IvyApp/ivy-videojs",
+  "scripts": {
+    "build": "ember build",
+    "deploy": "ember github-pages:commit --message \"Deploy gh-pages from commit $(git rev-parse HEAD)\"; git push; git checkout -",
+    "start": "ember server",
+    "test": "ember try:each"
+  },
   "dependencies": {
-    "ember-cli-babel": "^5.1.3",
-    "ember-cli-htmlbars": "0.7.9"
+    "ember-cli-babel": "^5.1.7",
+    "ember-cli-htmlbars": "^1.0.10"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "broccoli-asset-rev": "^2.4.5",
+    "ember-ajax": "^2.4.1",
+    "ember-cli": "2.10.0",
+    "ember-cli-app-version": "^2.0.0",
+    "ember-cli-dependency-checker": "^1.3.0",
+    "ember-cli-github-pages": "0.1.2",
+    "ember-cli-htmlbars-inline-precompile": "^0.3.3",
+    "ember-cli-inject-live-reload": "^1.4.1",
+    "ember-cli-jshint": "^2.0.1",
+    "ember-cli-qunit": "^3.0.1",
+    "ember-cli-release": "^0.2.9",
+    "ember-cli-sri": "^2.1.0",
+    "ember-cli-test-loader": "^1.1.0",
+    "ember-cli-uglify": "^1.2.0",
+    "ember-disable-prototype-extensions": "^1.1.0",
+    "ember-export-application-global": "^1.0.5",
+    "ember-load-initializers": "^0.5.1",
+    "ember-resolver": "^2.0.3",
+    "loader.js": "^4.0.10"
+  },
+  "engines": {
+    "node": ">= 0.12.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
