@@ -1,5 +1,8 @@
-import Ember from 'ember';
+import { scheduleOnce } from '@ember/runloop';
+import Component from '@ember/component';
 import videojs from 'videojs';
+
+import invokeAction from '../-internal/invoke-action';
 
 /**
  * Renders a `video` element, and applies a video.js player to it. Also
@@ -11,7 +14,7 @@ import videojs from 'videojs';
  * @class
  * @extends Ember.Component
  */
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'video',
 
   classNames: ['video-js'],
@@ -43,6 +46,7 @@ export default Ember.Component.extend({
    * @type Object
    * @private
    */
+  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
   playerEvents: {
     abort: 'abort',
     canplay: 'canplay',
@@ -82,13 +86,13 @@ export default Ember.Component.extend({
    * @param {String} playerProperty the video.js player property
    * @see {#setPlayerProperty}
    */
-  bindPropertyToPlayer(player, property, playerProperty=property) {
+  bindPropertyToPlayer(player, property, playerProperty = property) {
     const observer = function() {
       this.setPlayerProperty(player, playerProperty, this.get(property));
     };
 
     const scheduledObserver = function() {
-      Ember.run.scheduleOnce('render', this, observer);
+      scheduleOnce('render', this, observer);
     };
 
     this._addPlayerObserver(property, this, scheduledObserver);
@@ -116,13 +120,15 @@ export default Ember.Component.extend({
       const playerEvents = this.get('playerEvents');
       if (playerEvents) {
         for (let key in playerEvents) {
-          if (!playerEvents.hasOwnProperty(key)) { continue; }
+          if (!playerEvents.hasOwnProperty(key)) {
+            continue;
+          }
           this.sendActionOnPlayerEvent(player, key, playerEvents[key]);
         }
       }
 
       // Let the outside world know that we're ready.
-      this.sendAction('ready', player, this);
+      invokeAction(this, 'ready', player, this);
     });
   },
 
@@ -134,9 +140,9 @@ export default Ember.Component.extend({
    * @param {String} action the action name to be sent
    * @param {String} playerEvent the player event name to listen for
    */
-  sendActionOnPlayerEvent(player, action, playerEvent=action) {
+  sendActionOnPlayerEvent(player, action, playerEvent = action) {
     const listenerFunction = (...args) => {
-      this.sendAction(action, player, this, ...args);
+      invokeAction(this, action, player, this, ...args);
     };
 
     this._onPlayerEvent(player, playerEvent, listenerFunction);

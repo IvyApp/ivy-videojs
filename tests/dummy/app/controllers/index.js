@@ -1,6 +1,6 @@
-import Ember from 'ember';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   actions: {
     abort() {
       this.incrementProperty('abortCount');
@@ -131,9 +131,11 @@ export default Ember.Controller.extend({
   muted: false,
   playbackRate: 1,
   poster: 'https://vjs.zencdn.net/v/oceans.png',
+  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
   setup: {
     playbackRates: [0.5, 1, 1.5, 2]
   },
+  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
   src: [
     { src: 'https://vjs.zencdn.net/v/oceans.mp4', type: 'video/mp4' },
     { src: 'https://vjs.zencdn.net/v/oceans.webm', type: 'video/webm' }

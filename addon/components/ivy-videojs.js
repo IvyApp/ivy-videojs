@@ -1,9 +1,10 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import layout from '../templates/components/ivy-videojs';
+import invokeAction from '../-internal/invoke-action';
 
 function proxyAction(action) {
   return function(...args) {
-    this.sendAction(action, ...args);
+    invokeAction(this, action, ...args);
   };
 }
 
@@ -14,7 +15,7 @@ function proxyAction(action) {
  * @class
  * @extends Ember.Component
  */
-export default Ember.Component.extend({
+export default Component.extend({
   concatenatedProperties: ['playerAttributeBindings'],
 
   /**
@@ -24,6 +25,7 @@ export default Ember.Component.extend({
    * @type Array
    * @private
    */
+  // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
   playerAttributeBindings: [
     'autoplay',
     'controls',
@@ -66,7 +68,7 @@ export default Ember.Component.extend({
 
     ready(player, component, ...args) {
       this.setupPlayerAttributeBindings(player, component);
-      this.sendAction('ready', player, component, ...args);
+      invokeAction(this, 'ready', player, component, ...args);
     }
   },
 

@@ -12,8 +12,6 @@ Simple [Ember](http://emberjs.com/) integration for the [video.js](http://www.vi
 
 **NOTE:** Currently only the HTML5 video tech is supported. The Flash player is broken due to the fact that video.js removes the (Ember-managed) `<video>` element from the DOM when using anything other than the native HTML5 video tech.
 
-## Installation
-
 From the root of your [ember-cli](http://www.ember-cli.com/) application:
 
 ```sh
@@ -73,31 +71,31 @@ If you need more control over the video player, there's also an `ivy-videojs-pla
 
 The `ivy-videojs-player` does not bind any properties, but it does set up event handlers for the following:
 
-  * `abort`
-  * `canplay`
-  * `canplaythrough`
-  * `durationchange`
-  * `emptied`
-  * `ended`
-  * `error`
-  * `loadeddata`
-  * `loadedmetadata`
-  * `loadstart`
-  * `pause`
-  * `play`
-  * `playing`
-  * `progress`
-  * `ratechange`
-  * `resize`
-  * `seeked`
-  * `seeking`
-  * `stalled`
-  * `suspend`
-  * `timeupdate`
-  * `useractive`
-  * `userinactive`
-  * `volumechange`
-  * `waiting`
+- `abort`
+- `canplay`
+- `canplaythrough`
+- `durationchange`
+- `emptied`
+- `ended`
+- `error`
+- `loadeddata`
+- `loadedmetadata`
+- `loadstart`
+- `pause`
+- `play`
+- `playing`
+- `progress`
+- `ratechange`
+- `resize`
+- `seeked`
+- `seeking`
+- `stalled`
+- `suspend`
+- `timeupdate`
+- `useractive`
+- `userinactive`
+- `volumechange`
+- `waiting`
 
 Generally if you're using `ivy-videojs-player`, you'll set up a handler for the "ready" action, and then use that time to configure the player and set up any custom events or property bindings.
 
@@ -224,22 +222,22 @@ See [UPGRADING.md](https://github.com/IvyApp/ivy-videojs/blob/master/UPGRADING.m
 
 ### Installation
 
-* `git clone` this repository
-* `yarn`
-* `yarn run bower install`
+- `git clone` this repository
+- `yarn`
+- `yarn run bower install`
 
 ### Running
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+- `ember server`
+- Visit your app at http://localhost:4200.
 
 ### Running Tests
 
-* `ember test`
-* `ember test --server`
+- `ember test`
+- `ember test --server`
 
 ### Building
 
-* `ember build`
+## Usage
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).

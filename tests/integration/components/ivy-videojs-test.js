@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { compileTemplate as compile } from '@ember/template-compilation';
+import { run } from '@ember/runloop';
+import { Promise } from 'rsvp';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 
@@ -9,7 +11,7 @@ moduleForComponent('ivy-videojs', 'Integration | Component | ivy-videojs', {
 test('it sends a "ready" action when the player is ready', function(assert) {
   assert.expect(1);
 
-  return new Ember.RSVP.Promise((resolve) => {
+  return new Promise((resolve) => {
     this.on('ready', function() {
       assert.ok('"ready" action was sent');
       resolve();
@@ -23,15 +25,15 @@ function propertyBindingTests(property, exampleValue) {
   test(`it binds the "${property}" property to the player`, function(assert) {
     assert.expect(1);
 
-    return new Ember.RSVP.Promise((resolve) => {
+    return new Promise((resolve) => {
       this.on('ready', (player) => {
-        Ember.run(this, function() { this.set(property, exampleValue); });
+        run(this, function() { this.set(property, exampleValue); });
         assert.equal(player[property](), exampleValue);
 
         resolve();
       });
 
-      this.render(Ember.HTMLBars.compile(`{{ivy-videojs ${property}=${property} ready="ready"}}`));
+      this.render(compile(`{{ivy-videojs ${property}=${property} ready="ready"}}`));
     });
   });
 }
