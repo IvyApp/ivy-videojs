@@ -1885,8 +1885,9 @@ bower-endpoint-parser@0.2.2:
   resolved "https://registry.yarnpkg.com/bower-endpoint-parser/-/bower-endpoint-parser-0.2.2.tgz#00b565adbfab6f2d35addde977e97962acbcb3f6"
 
 bower@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/bower/-/bower-1.8.0.tgz#55dbebef0ad9155382d9e9d3e497c1372345b44a"
+  version "1.8.9"
+  resolved "https://registry.yarnpkg.com/bower/-/bower-1.8.9.tgz#89e10b8e940359aecca16b8d6aa196135bc90897"
+  integrity sha512-10CHDLeFr1adybioNdNnj3ieMMdk4sa23RAD3oeE0o1o7yf3qS7DmCSo2uQZrLEnbCN1qqeWZxOYxv+vWuguuQ==
 
 brace-expansion@^1.0.0:
   version "1.1.6"
