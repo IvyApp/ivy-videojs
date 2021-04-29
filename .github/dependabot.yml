@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: video.js
+    versions:
+    - 7.10.2
+    - 7.11.4
+  - dependency-name: jquery
+    versions:
+    - 3.5.1
+  - dependency-name: handlebars
+    versions:
+    - 4.7.6
